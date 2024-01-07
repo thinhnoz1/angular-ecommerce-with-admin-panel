@@ -39,8 +39,12 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
-jspm_packages/
+Fastkart-Admin-SSR/node_modules/
+Fastkart-Front-SSR/node_modules/
+Fastkart-Admin-SSR/jspm_packages/
+Fastkart-Front-SSR/jspm_packages/
+backend/node_modules/
+backend/jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

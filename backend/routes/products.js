@@ -17,12 +17,12 @@ router.get("/", async (req, res) => {
   } else {
     startValue = 0;
     endValue = 10;
-  }
-  
-  console.log(`SELECT * FROM products LIMIT ${paginate} OFFSET ${offsetValue}`);
+  } 
 
+  let query = `SELECT * FROM products p LIMIT ${paginate} OFFSET ${offsetValue}`;
+  
   db.query(
-    `SELECT * FROM products p LIMIT ${paginate} OFFSET ${offsetValue}`,
+    query,
     (err, results) => {
       if (err) console.log(err);
       else{

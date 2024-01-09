@@ -116,3 +116,29 @@ exports.getOrders = async (params) => {
     );
   });
 };
+
+exports.getCouponById = (id) => {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT * FROM coupons WHERE id = ${id}`, (err, result) => {
+            if (err) {
+                console.log(err);
+                reject({ error: "Internal Server Error" });
+            } else {
+                resolve(result[0]);
+            }
+        });
+    });
+};
+
+exports.getAllCoupons = () => {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT * FROM coupons`, (err, result) => {
+            if (err) {
+                console.log(err);
+                reject({ error: "Internal Server Error" });
+            } else {
+                resolve({ data: result, total: result.length });
+            }
+        });
+    });
+}

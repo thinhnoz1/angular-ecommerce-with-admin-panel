@@ -4,30 +4,52 @@ const db = require("../database/db");
 
 // GET ALL PRODUCTS
 router.get("/", async (req, res) => {
-  const { search = "", field = "", sort = "", page = 1, paginate = 10 } = req.query;
+  const { search = "", field = "", sort = "", page , paginate } = req.query;
 
-  let startValue;
-  let endValue;
   let offsetValue;
+  // This query won't work in MariaDB if you are using XAMPP default setting (which MariaDB is auto-configured instead of MySQL)
+  let query = `SELECT p.*,
+                JSON_ARRAYAGG(
+                  JSON_OBJECT(
+                    'id', c.id, 
+                    'name', c.name, 
+                    'slug', c.slug, 
+                    'description', c.description, 
+                    'status', c.status, 
+                    'parent_id', c.parent_id, 
+                    'type', c.type, 
+                    'category_image_id', c.category_image_id, 
+                    'category_icon_id', c.category_icon_id
+                  )
+                ) AS 'categories'
+              from products p
+              inner join product_category pc on p.id = pc.product_id
+              inner join categories c on pc.category_id = c.id
+              GROUP BY p.id `;//LIMIT ${paginate} OFFSET ${offsetValue}
 
   if (page > 0) {
-    startValue = page * paginate - paginate; // 0,10,20,30
-    endValue = page * paginate;
-    offsetValue = (page - 1)*paginate
-  } else {
-    startValue = 0;
-    endValue = 10;
+    offsetValue = (page - 1)*paginate;
+    query+=` LIMIT ${paginate} OFFSET ${offsetValue}`;
   } 
+  // else {
+  //   query+=` LIMIT 100`;
+  // } 
 
-  let query = `SELECT * FROM products p LIMIT ${paginate} OFFSET ${offsetValue}`;
-  
+  // console.log(query);
+  // var fs=require('fs');
+  // var data=fs.readFileSync('./product.json', 'utf8');
+  // var words=JSON.parse(data);
+  // res.json(words)
   db.query(
     query,
     (err, results) => {
       if (err) console.log(err);
       else{
+        
         res.json({
-          data: results,
+          data: results.map(obj => {
+            return { ...obj, categories: JSON.parse(obj.categories) };
+        }),
           total: results ? results.length : 0
         });
       } 

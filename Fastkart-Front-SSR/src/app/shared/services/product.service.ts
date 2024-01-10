@@ -19,4 +19,8 @@ export class ProductService {
     return this.http.get<ProductModel>(`${environment.apiURL}/products`, { params: payload });
   }
 
+  static getProducts(http: HttpClient, payload?: Params): Observable<ProductModel> {
+    // return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
+    return http.get<ProductModel>(`${environment.apiURL}/products`, { params: payload });
+  }
 }

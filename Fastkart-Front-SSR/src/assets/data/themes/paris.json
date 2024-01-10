@@ -6,8 +6,8 @@
       "main_banner": {
         "image_url": "assets/images/data/themes/paris/1.jpg",
         "redirect_link": {
-          "link": "vegetables-fruits",
-          "link_type": "collection"
+          "link": "https://www.google.com/",
+          "link_type": "external_url"
         }
       },
       "sub_banner_1": {
@@ -31,16 +31,16 @@
       "banners": [
         {
           "redirect_link": {
-            "link": "vegetables-fruits",
-            "link_type": "collection"
+            "link": "https://www.google.com/",
+            "link_type": "external_url"
           },
           "status": true,
           "image_url": "assets/images/data/themes/paris/3.jpg"
         },
         {
           "redirect_link": {
-            "link": "vegetables-fruits",
-            "link_type": "collection"
+            "link": "https://www.google.com/",
+            "link_type": "external_url"
           },
           "status": true,
           "image_url": "assets/images/data/themes/paris/3.jpg"
@@ -68,19 +68,8 @@
       "sidebar": {
         "status": true,
         "categories_icon_list": {
-          "title": "Popular Categories",
-          "category_ids": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10
-          ],
+          "title": "Left Vertical Categories",
+          "category_ids": "get-first-level",
           "status": true
         },
         "left_side_banners": {
@@ -235,10 +224,10 @@
     },
     "products_ids": [
       54,
-          55,
-          56,
-          57,
-          58
+      55,
+      56,
+      57,
+      58
     ]
   },
   "slug": "paris"

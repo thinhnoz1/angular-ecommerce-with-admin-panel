@@ -102,8 +102,8 @@
         }
       },
       "section1_products": {
-        "title": "Top Save Today",
-        "description": "Don't miss this opportunity at a special discount just for this week.",
+        "title": "On Save Today",
+        "description": "On sale products for limited time! Don't miss these opportunity.",
         "product_ids": [
           54,
           55,
@@ -115,8 +115,8 @@
       },
       "section2_categories_list": {
         "image_url": null,
-        "title": "Bowse By Categories",
-        "description": "Uncover Hidden Gems and Culinary Delights",
+        "title": "New Laptop",
+        "description": "Brand new laptop for you!",
         "category_ids": [
           1,
           2,
@@ -127,6 +127,13 @@
           7,
           10,
           9
+        ],
+        "product_ids": [
+          54,
+          55,
+          56,
+          57,
+          58
         ],
         "status": true
       },
@@ -204,16 +211,6 @@
           "link_type": "collection"
         },
         "status": true
-      },
-      "section9_featured_blogs": {
-        "title": "Featured Blog",
-        "description": "Uncover Intriguing Highlights in Our Featured Blog",
-        "status": true,
-        "blog_ids": [
-          10,
-          14,
-          23
-        ]
       }
     },
     "news_letter": {

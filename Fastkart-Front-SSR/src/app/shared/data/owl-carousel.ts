@@ -3,10 +3,11 @@ import { OwlOptions } from 'ngx-owl-carousel-o';
 // Product Slider (5 Items)
 export const productSlider: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   items: 5,
   margin: 0,
-  dots: false,
+  dots: true,
   responsive: {
     0: {
       items: 2,
@@ -26,7 +27,8 @@ export const productSlider: OwlOptions = {
 // Product Slider (5 Items)
 export const productSliderMargin: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   items: 5,
   margin: 20,
   dots: false,
@@ -52,7 +54,8 @@ export const productSliderMargin: OwlOptions = {
 // Product Slider (5 Items)
 export const productSlider2: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   items: 5,
   margin: 15,
   dots: false,
@@ -75,7 +78,8 @@ export const productSlider2: OwlOptions = {
 // Product Slider (6 Items)
 export const productSlider6Item: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   items: 6,
   dots: false,
   responsive: {
@@ -100,7 +104,8 @@ export const productSlider6Item: OwlOptions = {
 // Product Slider (6 Items)
 export const productSlider6ItemMargin: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   items: 6,
   margin: 24,
   dots: false,
@@ -129,7 +134,8 @@ export const productSlider6ItemMargin: OwlOptions = {
 // Banner Slider
 export const bannerSlider: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   dots: false,
   items: 4,
   margin: 20,
@@ -160,7 +166,8 @@ export const bannerSlider: OwlOptions = {
 // Product Slider(3 Items)
 export const customOptionsItem3: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   dots: false,
   margin: 20,
   items: 3,
@@ -182,7 +189,8 @@ export const customOptionsItem3: OwlOptions = {
 // Product Slider(4 Items)
 export const customOptionsItem4: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   dots: false,
   margin: 20,
   items: 4,
@@ -205,7 +213,8 @@ export const customOptionsItem4: OwlOptions = {
 // Category Slider
 export const categorySlider: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   dots: false,
   items: 7,
   margin: 20,
@@ -237,7 +246,8 @@ export const categorySlider: OwlOptions = {
 // Category Slider
 export const categorySlider9: OwlOptions = {
   loop: true,
-  nav: false,
+  nav: true,
+  navText: ["<", ">"],
   dots: false,
   margin: 10,
   items: 9,
@@ -280,7 +290,8 @@ export const categorySlider9: OwlOptions = {
 export const singleSlider: OwlOptions = {
   loop: true,
   nav: true,
-  dots: false,
+  navText: ["<", ">"],
+  dots: true,
   items: 1,
   responsive: {
     0: {
@@ -301,9 +312,10 @@ export const productMainThumbSlider: OwlOptions = {
   mouseDrag: true,
   touchDrag: true,
   pullDrag: true,
-  dots: false,
+  dots: true,
   items: 1,
   nav: true,
+  navText: ["<", ">"],
   autoplay: true,
   navSpeed: 300,
   responsive: {
@@ -317,6 +329,8 @@ export const productMainThumbSlider: OwlOptions = {
 export const productThumbSlider: OwlOptions = {
   loop: false,
   dots: false,
+  nav: true,
+  navText: ["<", ">"],
   margin: 10,
   navSpeed: 300,
   autoHeight: true,
@@ -334,6 +348,8 @@ export const productThumbSlider: OwlOptions = {
 export const productSliderLayout: OwlOptions = {
   items: 4,
   loop: true,
+  nav: true,
+  navText: ["<", ">"],
   dots: false,
   margin: 15,
   navSpeed: 300,

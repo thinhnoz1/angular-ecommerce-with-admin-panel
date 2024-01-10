@@ -16,6 +16,10 @@ export class CategoryService {
     return this.http.get<CategoryModel>(`${environment.apiURL}/categories`, { params: payload });
   }
 
+  static getCategories(http: HttpClient, payload?: Params): Observable<CategoryModel> {
+    return http.get<CategoryModel>(`${environment.apiURL}/categories`, { params: payload });
+  }
+
   getFirstLevelCategories(payload?: Params): Observable<CategoryModel> {
     return this.http.get<CategoryModel>(`${environment.apiURL}/categories/get-parent-categories`, { params: payload });
   }

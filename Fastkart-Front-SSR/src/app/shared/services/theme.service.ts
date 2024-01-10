@@ -13,14 +13,14 @@ export class ThemeService {
 
   constructor(private http: HttpClient) { }
 
-  getHomePage(slug?: string): Observable<Paris> {
+  getHomePageParis(slug?: string): Observable<Paris> {
     if(!slug) {
       slug = 'paris';
     }
 
     const theme_datasetting$ = this.http.get<Paris>(`${environment.URL}/themes/${slug}.json`);
-    const parentCategories$ = CategoryService.getFirstLevelCategories(this.http, {});
-    const product$ = ProductService.getProducts(this.http, {paginate: 2});
+    const parentCategories$ = CategoryService.getCategories(this.http, {});
+    const product$ = ProductService.getProducts(this.http, {});
     // Add categories data to theme_datasetting
     const itemWithFavoriteProperty$ = theme_datasetting$.pipe(
       switchMap(item => forkJoin([parentCategories$, product$]).pipe(
@@ -29,8 +29,13 @@ export class ThemeService {
         map(([category_ids, product_ids ]) => ({...item, category_ids, product_ids}))
       )),
       map(obj => {
-        obj.content.main_content.sidebar.categories_icon_list.category_ids = obj.category_ids.data.map(i => i.id);
-        obj.content.main_content.sidebar.sidebar_products.product_ids = obj.product_ids.data.map(i => i.id);
+        obj.content.main_content.sidebar.categories_icon_list.category_ids = obj.category_ids.data.filter(i => !i.parent_id).map(i => i.id);
+        obj.content.main_content.sidebar.sidebar_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
+        obj.content.main_content.section2_categories_list.category_ids = obj.category_ids.data.map(i => i.id);
+        obj.content.main_content.section1_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
+        obj.content.main_content.section4_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
+        obj.content.main_content.section7_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
+
         return obj
       })
     )

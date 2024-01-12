@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Cart, CartAddOrUpdate } from '../../../../interface/cart.interface';
@@ -16,7 +16,7 @@ import { CartService } from '../../../../services/cart.service';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
-export class CartComponent {
+export class CartComponent implements AfterViewInit {
 
   @Select(CartState.cartItems) cartItem$: Observable<Cart[]>;
   @Select(CartState.cartTotal) cartTotal$: Observable<number>;
@@ -57,6 +57,10 @@ export class CartComponent {
         this.confetti = 0;
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    // debugger
   }
 
   cartToggle(value: boolean) {

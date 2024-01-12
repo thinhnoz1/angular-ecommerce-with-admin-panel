@@ -145,31 +145,6 @@
                                                 {{ (checkoutTotal ? (checkoutTotal.total.tax_total | currencySymbol) : 'not_calculated_yet' | translate ) }}
                                             </h4>
                                         </li>
-                                        <li *ngIf="(user$ | async) && checkoutTotal && (user$ | async)?.point?.balance">
-                                            <h4 [class]="form.controls['points_amount'].value ? 'txt-primary fw-bold' : 'text-muted'">
-                                                {{ 'points' | translate  }}
-                                            </h4>
-                                            <h4 [class]="form.controls['points_amount'].value ? 'txt-primary fw-bold price' : 'text-muted price'">
-                                                {{ (checkoutTotal ? (checkoutTotal.total.convert_point_amount! | currencySymbol) : 'not_calculated_yet' | translate ) }}
-                                            </h4>
-                                        </li>
-                                        <li class="border-cls"
-                                            *ngIf="(user$ | async) && checkoutTotal && (user$ | async)?.point?.balance">
-                                            <label class="form-check-label m-0" for="ponts">{{ 'using_point' | translate }}</label>
-                                            <input class="checkbox_animated check-it" type="checkbox" id="ponts" (change)="togglePoint($event)">
-                                        </li>
-                                        <li *ngIf="(user$ | async) && checkoutTotal && (user$ | async)?.wallet?.balance">
-                                            <h4 [class]="form.controls['wallet_balance'].value ? 'txt-primary fw-bold' : 'text-muted'">
-                                                {{ 'wallet_balance' | translate  }}
-                                            </h4>
-                                            <h4 [class]="form.controls['wallet_balance'].value ? 'txt-primary fw-bold price' : 'text-muted price'">
-                                                {{ (checkoutTotal ? (checkoutTotal.total.convert_wallet_balance! | currencySymbol) : 'not_calculated_yet' | translate ) }}
-                                            </h4>
-                                        </li>
-                                        <li class="border-cls" *ngIf="(user$ | async) && checkoutTotal && (user$ | async)?.wallet?.balance">
-                                            <label class="form-check-label m-0" for="wallet">{{ 'using_wallet' | translate }}</label>
-                                            <input class="checkbox_animated check-it" type="checkbox" id="wallet" (change)="toggleWallet($event)">
-                                        </li>
                                         <li class="coupon-sec" *ngIf="(user$ | async) && checkoutTotal">
                                             <a class="promocode-title" (click)="showCoupon()" *ngIf="!coupon && !appliedCoupon">
                                                 <h4>{{ 'have_a_promo_code?' | translate }}</h4>

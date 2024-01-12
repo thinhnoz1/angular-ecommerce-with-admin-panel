@@ -58,7 +58,8 @@ export class CartState {
 
   @Action(GetCartItems)
   getCartItems(ctx: StateContext<CartStateModel>) {
-    return this.cartService.getCartItems().pipe(
+    const state = ctx.getState();
+    return of(state).pipe(
       tap({
         next: result => {
           // Set Selected Varaint

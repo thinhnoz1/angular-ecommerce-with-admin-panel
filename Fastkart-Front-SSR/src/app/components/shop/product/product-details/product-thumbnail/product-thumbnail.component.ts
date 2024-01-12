@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { Product } from '../../../../../shared/interface/product.interface';
 import { Option } from '../../../../../shared/interface/theme-option.interface';
 import * as data from  '../../../../../shared/data/owl-carousel';
@@ -8,7 +8,7 @@ import * as data from  '../../../../../shared/data/owl-carousel';
   templateUrl: './product-thumbnail.component.html',
   styleUrls: ['./product-thumbnail.component.scss']
 })
-export class ProductThumbnailComponent {
+export class ProductThumbnailComponent implements AfterViewInit {
 
   @Input() product: Product;
   @Input() option: Option | null;
@@ -17,5 +17,14 @@ export class ProductThumbnailComponent {
 
   public productMainThumbSlider = data.productMainThumbSlider;
   public productThumbSlider = data.productThumbSlider;
+
+  constructor() {
+    console.log("Selected prod:")
+    
+  }
+  ngAfterViewInit(): void {
+    console.log(this.product)
+  }
+  
 
 }

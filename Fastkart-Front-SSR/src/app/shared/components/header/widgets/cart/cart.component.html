@@ -87,9 +87,9 @@
                     </div>
                     <div>
                         <div class="header-button-group">
-                            <app-button [class]="'edit-button close_button'" [id]="'cart_item_edit_btn'+item.product.id" [spinner]="false" (click)="VariationModal.openModal(item)" *ngIf="item?.variation">
+                            <!-- <app-button [class]="'edit-button close_button'" [id]="'cart_item_edit_btn'+item.product.id" [spinner]="false" (click)="VariationModal.openModal(item)" *ngIf="item?.variation">
                                 <i class="ri-pencil-line"></i>
-                            </app-button>
+                            </app-button> -->
                             <app-button [class]="'delete-button close_button'" [id]="'cart_item_delete_btn'+item.product.id" [spinner]="false" (click)="delete(item.id)">
                                 <i class="ri-delete-bin-line"></i>
                             </app-button>
@@ -121,10 +121,10 @@
 </div>
 <div class="bg-overlay" [class.show]="cartStyle == 'cart_sidebar' && (sidebarCartOpen$ | async)" (click)="cartStyle == 'cart_sidebar' && cartToggle(false)"></div>
 <!-- Free Shipping Celebration -->
-<div class="confetti-wrapper" [class.show]="confetti == 1 && (sidebarCartOpen$ | async)">
+<!-- <div class="confetti-wrapper" [class.show]="confetti == 1 && (sidebarCartOpen$ | async)">
     <ng-container *ngFor="let item of confettiItems">
         <div class="confetti-{{item}}"></div>
     </ng-container>
-</div>
+</div> -->
 <!-- Variation Customize -->
 <app-variation-modal #variationModal></app-variation-modal>

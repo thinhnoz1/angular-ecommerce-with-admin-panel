@@ -24,6 +24,7 @@ export class ParisComponent {
   @ViewChild("exitModal") ExitModal: ExitModalComponent;
 
   public categorySlider = data.categorySlider;
+  public productSlider = data.productSlider6ItemMargin;
 
   constructor(private store: Store,
     @Inject(PLATFORM_ID) private platformId: Object,

@@ -116,3 +116,75 @@ exports.getOrders = async (params) => {
     );
   });
 };
+
+exports.getAllTags = () => {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT * FROM tags`, (err, result) => {
+            if (err) {
+                console.log(err);
+                reject({error: "Internal Server Error"});
+            } else {
+                resolve({data: result, total: result.length});
+            }
+        });
+    });
+}
+
+exports.getTagById = (id) => {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT * FROM tags WHERE id = ${id}`, (err, result) => {
+            if (err) {
+                console.log(err);
+                reject({error: "Internal Server Error"});
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
+
+exports.createTag = (tagData) => {
+    return new Promise((resolve, reject) => {
+        const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        const sqlQuery = `INSERT INTO tags (name, slug, type, description, status) VALUES (?, ?, ?, ?, ?)`;
+
+        db.query(
+            sqlQuery,
+            [
+                tagData.name,
+                tagData.slug,
+                tagData.type,
+                tagData.description,
+                tagData.status,
+            ],
+            (err, result) => {
+                if (err) {
+                    console.error(err);
+                    reject({message: err, statusCode: 500});
+                } else {
+                    resolve({
+                        message: "Coupon created successfully",
+                        data: result,
+                        statusCode: 201,
+                    });
+                }
+            }
+        );
+    });
+};
+
+exports.deleteTag = (id) => {
+    return new Promise((resolve, reject) => {
+
+        db.query(`UPDATE tags SET status = 0 WHERE id = ${id}`,
+            (err, result) => {
+                if (err) {
+                    console.log(err);
+                    reject({error: err});
+                } else {
+                    resolve({data: result});
+                }
+            });
+    });
+};

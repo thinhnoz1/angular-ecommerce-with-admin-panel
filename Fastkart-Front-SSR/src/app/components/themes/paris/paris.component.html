@@ -78,7 +78,7 @@
 
           <!-- Categories Section Start-->
           <ng-container *ngIf="data?.content?.main_content?.section2_categories_list?.status">
-            <div>
+            <div class="category-product-section">
               <app-title
                 [title]="data?.content?.main_content?.section2_categories_list?.title"
                 [description]="data?.content?.main_content?.section2_categories_list?.description">
@@ -90,6 +90,14 @@
                 [theme]="'paris'"
                 [style]="'horizontal'">
               </app-theme-categories>
+              <div class="section-b-space">
+                <app-theme-product
+                  [sliderOption] = "productSlider"
+                  [productIds]="data?.content?.main_content?.section4_products?.product_ids || []"
+                  [slider]="true"
+                  [style]="'horizontal'">
+                </app-theme-product>
+              </div>
             </div>
           </ng-container>
           <!-- Categories Section End-->

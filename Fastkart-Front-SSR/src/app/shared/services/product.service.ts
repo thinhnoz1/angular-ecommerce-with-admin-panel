@@ -16,7 +16,16 @@ export class ProductService {
   //'{"search":"","field":"","sort":"","page":1,"paginate":30}'
   getProducts(payload?: Params): Observable<ProductModel> {
     // return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
-    return this.http.get<ProductModel>(`${environment.URL}/product`, { params: {page: 1} });
+    return this.http.get<ProductModel>(`${environment.apiURL}/products`, { params: payload });
   }
 
+  static getProducts(http: HttpClient, payload?: Params): Observable<ProductModel> {
+    // return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
+    return http.get<ProductModel>(`${environment.apiURL}/products`, { params: payload });
+  }
+
+  getProductBySlug(payload?: Params): Observable<ProductModel> {
+    // return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
+    return this.http.get<ProductModel>(`${environment.apiURL}/products/get-one-by-slug`, { params: payload });
+  }
 }

@@ -28,7 +28,7 @@ export class ThemeState {
 
   @Action(GetHomePage)
   getHomePage(ctx: StateContext<ThemesStateModel>, action: GetHomePage) {
-    return this.themeService.getHomePage(action?.slug).pipe(
+    return this.themeService.getHomePageParis(action?.slug).pipe(
       tap({
         next: (result) => {
           ctx.patchState({

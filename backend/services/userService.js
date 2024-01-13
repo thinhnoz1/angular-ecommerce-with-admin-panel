@@ -55,3 +55,26 @@ exports.updateUser = async (params) => {
     );
   });
 };
+
+exports.getTestUserInfo = async (params) => {
+  const { userId } = params;
+
+  if (!userId) throw { message: "userId was not provided", statusCode: 400 };
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM users where id = ${userId}`,
+      (err, results) => {
+
+        if (err) reject({ message: err, statusCode: 500 })
+        else {
+          resolve({
+            statusCode: 200,
+            data:  results.length ? results : null,
+            total: results.length
+          });
+        }
+      }
+    );
+  });
+};

@@ -32,8 +32,8 @@
         },
         "same_day_delivery": true,
         "same_day": {
-          "title": "Express Delivery",
-          "description": "Schedule"
+          "title": "Receive at local store",
+          "description": "Pick up at the nearest store in your area"
         },
         "same_day_intervals": [
           {

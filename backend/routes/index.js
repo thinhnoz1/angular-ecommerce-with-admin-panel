@@ -11,6 +11,7 @@ const countriesRoute = require("./countries");
 const statesRoute = require("./states");
 const couponsRoute = require("./coupons");
 const tagsRoute = require("./tags");
+const addressesRoute = require("./addresses");
 
 router.use("/api/v1/auth", authRoute);
 router.use("/api/v1/users", usersRoute);
@@ -22,5 +23,6 @@ router.use("/api/v1/countries", countriesRoute);
 router.use("/api/v1/states", statesRoute);
 router.use("/api/v1/coupons", couponsRoute);
 router.use("/api/v1/tags", tagsRoute);
+router.use("/api/v1/addresses", addressesRoute);
 
 module.exports = router;

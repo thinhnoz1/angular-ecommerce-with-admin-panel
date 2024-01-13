@@ -12,7 +12,8 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   getUserDetails(): Observable<AccountUser> {
-    return this.http.get<AccountUser>(`${environment.URL}/account.json`);
+    // return this.http.get<AccountUser>(`${environment.URL}/account.json`);
+    return this.http.get<AccountUser>(`${environment.apiURL}/users/get-test-user`);
   }
 
 }

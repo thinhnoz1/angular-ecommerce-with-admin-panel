@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { FormBuilder, FormControl, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -21,7 +21,7 @@ import { Values, DeliveryBlock } from '../../../shared/interface/setting.interfa
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements AfterViewInit {
 
   public breadcrumb: Breadcrumb = {
     title: "Checkout",
@@ -60,6 +60,9 @@ export class CheckoutComponent {
       delivery_interval: new FormControl(),
       payment_method: new FormControl('', [Validators.required])
     });
+  }
+  ngAfterViewInit(): void {
+    // throw new Error('Method not implemented.');
   }
 
   get productControl(): FormArray {
@@ -174,6 +177,8 @@ export class CheckoutComponent {
       if(this.cpnRef && !this.cpnRef.nativeElement.value) {
         this.form.controls['coupon'].reset();
       }
+      console.log("Form Value");
+      console.log(this.form.value);
       this.store.dispatch(new PlaceOrder(this.form.value));
     }
   }

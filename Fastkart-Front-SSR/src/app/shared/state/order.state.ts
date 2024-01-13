@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Store, Action, Selector, State, StateContext } from "@ngxs/store";
-import { tap } from "rxjs";
+import { Store, Action, Selector, State, StateContext, Select } from "@ngxs/store";
+import { Observable, tap } from "rxjs";
 import { GetOrders, ViewOrder, Checkout, PlaceOrder, Clear, VerifyPayment, RePayment } from "../action/order.action";
 import { Order, OrderCheckout } from "../interface/order.interface";
 import { OrderService } from "../services/order.service";
 import { ClearCart } from "../action/cart.action";
+import { CartState } from "./cart.state";
+import { Cart } from "../interface/cart.interface";
 
 export class OrderStateModel {
   order = {
@@ -30,9 +32,11 @@ export class OrderStateModel {
 @Injectable()
 export class OrderState {
 
+  @Select(CartState.cartItems) cartItem$: Observable<Cart[]>;
+
   constructor(private store: Store,
     private router: Router,
-    private orderService: OrderService) {}
+    private orderService: OrderService) { }
 
   @Selector()
   static order(state: OrderStateModel) {
@@ -96,28 +100,32 @@ export class OrderState {
   checkout(ctx: StateContext<OrderStateModel>, action: Checkout) {
 
     const state = ctx.getState();
-
-    // It Just Static Values as per cart default value (When you are using api then you need calculate as per your requirement)
-    const order = {
-      total : {
-        convert_point_amount: -10,
-        convert_wallet_balance: -84.4,
-        coupon_total_discount: 10,
-        points: 300,
-        points_amount: 10,
-        shipping_total: 0,
-        sub_total: 35.19,
-        tax_total: 2.54,
-        total: 37.73,
-        wallet_balance: 84.4,
+    console.log("Order.state");
+    // Calculate using cart information
+    this.cartItem$.subscribe(cartItem => {
+      const sub_total_value= cartItem.reduce((accumulator, object) => {
+        return accumulator + (object.product.sale_price*object.quantity);
+      }, 0);
+      const order = {
+        total: {
+          convert_point_amount: -10,
+          convert_wallet_balance: -84.4,
+          coupon_total_discount: 10,
+          points: 300,
+          points_amount: 10,
+          shipping_total: 0,
+          sub_total: sub_total_value,
+          tax_total: sub_total_value*8/100,
+          total: sub_total_value+(sub_total_value*8/100),
+          wallet_balance: 84.4,
+        }
       }
-    }
 
-    ctx.patchState({
-      ...state,
-      checkout: order
+      ctx.patchState({
+        ...state,
+        checkout: order
+      });
     });
-    
   }
 
   @Action(PlaceOrder)

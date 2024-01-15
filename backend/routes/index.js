@@ -12,6 +12,7 @@ const statesRoute = require("./states");
 const couponsRoute = require("./coupons");
 const tagsRoute = require("./tags");
 const addressesRoute = require("./addresses");
+const taxesRoute = require("./taxes");
 
 router.use("/api/v1/auth", authRoute);
 router.use("/api/v1/users", usersRoute);
@@ -24,5 +25,6 @@ router.use("/api/v1/states", statesRoute);
 router.use("/api/v1/coupons", couponsRoute);
 router.use("/api/v1/tags", tagsRoute);
 router.use("/api/v1/addresses", addressesRoute);
+router.use("/api/v1/taxes", taxesRoute);
 
 module.exports = router;

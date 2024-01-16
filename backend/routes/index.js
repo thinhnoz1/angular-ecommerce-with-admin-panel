@@ -15,6 +15,7 @@ const addressesRoute = require("./addresses");
 const taxesRoute = require("./taxes");
 const permissionRoute = require("./permission");
 const attributesRoute = require("./attribute");
+const variationRoute = require("./variation");
 
 router.use("/api/v1/auth", authRoute);
 router.use("/api/v1/users", usersRoute);
@@ -30,4 +31,6 @@ router.use("/api/v1/addresses", addressesRoute);
 router.use("/api/v1/taxes", taxesRoute);
 router.use("/api/v1/permission", permissionRoute);
 router.use("/api/v1/attribute", attributesRoute);
+router.use("/api/v1/variation", variationRoute);
+
 module.exports = router;

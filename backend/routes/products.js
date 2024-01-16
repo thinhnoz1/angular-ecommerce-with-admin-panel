@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database/db");
+const productController = require("../controllers/productController");
 
 // GET ALL PRODUCTS
 router.get("/", async (req, res) => {
@@ -198,4 +199,9 @@ router.get("/get-one-by-slug", async (req, res) => {
   );
 });
 
+router.get("/get-all", productController.get_all_products);
+router.get("/get-one/:id", productController.get_product_by_id);
+router.post("/create", productController.create_product);
+router.put("/update/:id", productController.update_product);
+router.get("/delete/:id", productController.delete_product);
 module.exports = router;

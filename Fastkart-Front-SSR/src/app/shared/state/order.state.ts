@@ -130,7 +130,24 @@ export class OrderState {
 
   @Action(PlaceOrder)
   placeOrder(ctx: StateContext<OrderStateModel>, action: PlaceOrder) {
-    this.router.navigateByUrl(`/account/order/details/1000`);
+    return this.orderService.createPaymentUrl(action?.payload).pipe(
+      tap({
+        next: result => {
+          // ctx.patchState({
+          //   order: {
+          //     data: result.data,
+          //     total: result?.total ? result?.total : result.data?.length
+          //   }
+          // });
+          console.log(result);
+          (window as any).open(result, "_blank");
+        },
+        error: err => {
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
+    //this.router.navigateByUrl(`/account/order/details/1000`);
   }
 
   @Action(RePayment)

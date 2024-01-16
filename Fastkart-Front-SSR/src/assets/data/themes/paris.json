@@ -102,7 +102,7 @@
         }
       },
       "section1_products": {
-        "title": "On Save Today",
+        "title": "On Sale Today",
         "description": "On sale products for limited time! Don't miss these opportunity.",
         "product_ids": [
           54,
@@ -113,28 +113,32 @@
         ],
         "status": true
       },
+      "section2_products_category_list": [
+        {
+          "parent_category_id": 4,
+          "image_url": null,
+          "title": "New Laptop",
+          "description": "Brand new laptop for you!",
+          "category_ids": [],
+          "product_ids": [],
+          "status": true
+        },
+        {
+          "parent_category_id": 5,
+          "image_url": null,
+          "title": "Old Laptop",
+          "description": "Brand new laptop for you!",
+          "category_ids": [],
+          "product_ids": [],
+          "status": true
+        }
+      ],
       "section2_categories_list": {
         "image_url": null,
         "title": "New Laptop",
         "description": "Brand new laptop for you!",
-        "category_ids": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          10,
-          9
-        ],
-        "product_ids": [
-          54,
-          55,
-          56,
-          57,
-          58
-        ],
+        "category_ids": [],
+        "product_ids": [],
         "status": true
       },
       "section3_two_column_banners": {
@@ -155,8 +159,8 @@
         }
       },
       "section4_products": {
-        "title": "Fresh Veggies and Fruits",
-        "description": "Unlocking the Pantry: A Journey into Essential Veggies Staples",
+        "title": "Old Laptop",
+        "description": "Used price but still good as new",
         "status": true,
         "product_ids": [
           54,

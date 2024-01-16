@@ -2,7 +2,7 @@
     "data": [
       {
         "id": 11,
-        "name": "Liter",
+        "name": "Ram",
         "style": "dropdown",
         "slug": "liter",
         "status": 1,
@@ -138,7 +138,7 @@
       },
       {
         "id": 9,
-        "name": "Waist",
+        "name": "CPU",
         "style": "radio",
         "slug": "waist",
         "status": 1,
@@ -195,7 +195,7 @@
       },
       {
         "id": 8,
-        "name": "Colour",
+        "name": "GPU",
         "style": "image",
         "slug": "colour",
         "status": 1,

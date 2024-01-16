@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database/db");
+const categoryController = require("../controllers/categoryController");
 
 // GET ALL Categories
 router.get("/", async (req, res) => {
@@ -8,17 +9,17 @@ router.get("/", async (req, res) => {
   let query = `
   SELECT c.*, ( CASE
       WHEN pc.parent_id IS NULL THEN NULL
-      ELSE 
+      ELSE
           JSON_ARRAYAGG(
                     JSON_OBJECT(
-                      'id', pc.id, 
-                      'name', pc.name, 
-                      'slug', pc.slug, 
-                      'description', pc.description, 
-                      'status', pc.status, 
-                      'parent_id', pc.parent_id, 
-                      'type', pc.type, 
-                      'category_image_id', pc.category_image_id, 
+                      'id', pc.id,
+                      'name', pc.name,
+                      'slug', pc.slug,
+                      'description', pc.description,
+                      'status', pc.status,
+                      'parent_id', pc.parent_id,
+                      'type', pc.type,
+                      'category_image_id', pc.category_image_id,
                       'category_icon_id', pc.category_icon_id
                     )
                   )
@@ -38,14 +39,14 @@ router.get("/", async (req, res) => {
     (err, results) => {
       if (err) console.log(err);
       else{
-        
+
         res.json({
           data: results.map(obj => {
             return { ...obj, subcategories: JSON.parse(obj.subcategories) };
         }),
           total: results ? results.length : 0
         });
-      } 
+      }
     }
   );
 });
@@ -132,5 +133,15 @@ router.get("/get-one", async (req, res) => {
     }
   );
 });
+
+router.get('/get-all', categoryController.get_all_categories);
+
+router.get('/get-one/:id', categoryController.get_category_by_id);
+
+router.post('/create', categoryController.create_category);
+
+router.put('/update/:id', categoryController.update_category);
+
+router.get('/delete/:id', categoryController.delete_category);
 
 module.exports = router;

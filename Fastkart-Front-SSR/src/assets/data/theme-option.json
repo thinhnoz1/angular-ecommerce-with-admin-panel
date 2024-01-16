@@ -66,14 +66,11 @@
             "content": "<strong class=\"me-1\">Welcome to Fastkart!</strong>Wrap new offers/gift every single day on Weekends.<strong class=\"ms-1\">New Coupon Code: FAST50</strong>"
           },
           {
-            "content": "Something you love is now on sale <strong>Buy Now!</strong>"
-          },
-          {
-            "content": "Your must-have item is calling – <strong>Buy Now!</strong>"
+            "content": "Welcome to <strong>Fastkart!</strong>"
           }
         ],
         "page_top_bar_dark": false,
-        "support_number": "+1-555-186-5359",
+        "support_number": "+1-1900-10 không có",
         "today_deals": [
           54,
             55,
@@ -95,10 +92,10 @@
       "footer": {
         "footer_style": "light_mode",
         "footer_copyright": true,
-        "copyright_content": "©2023 Fastkart All rights reserved",
-        "footer_about": "Discover convenience redefined at our multipurpose store. From fresh groceries to the latest fashion trends, find everything you need under one roof. Your one-stop shopping destination for a diverse range of products.",
-        "about_address": "1418 Riverwood Drive, CA 96052, US",
-        "about_email": "support@fastkart.com",
+        "copyright_content": "©2023 Copyright by Thinh",
+        "footer_about": "Simply the source for the best deal on laptop you ever have.",
+        "about_address": "Hanoi, Vietnam",
+        "about_email": "support@example.com",
         "footer_categories": [
           6,
           5,
@@ -147,10 +144,6 @@
             "link": "about-us"
           },
           {
-            "label": "Blogs",
-            "link": "blogs"
-          },
-          {
             "label": "Offers",
             "link": "offer"
           },
@@ -159,8 +152,8 @@
             "link": "search"
           }
         ],
-        "support_number": "+1-555-186-5359",
-        "support_email": "support@fastkart.com",
+        "support_number": "+84-1900-10 không có",
+        "support_email": "support@example.com",
         "play_store_url": "https://play.google.com/",
         "app_store_url": "https://apple.com/",
         "social_media_enable": true,

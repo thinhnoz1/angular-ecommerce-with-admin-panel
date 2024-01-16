@@ -100,12 +100,12 @@
 <!-- revenue & top vendor -->
 <section>
     <div class="row m-0">
-        <div class="col-xl-8 col-md-6 p-0">
+        <div class="col-xl-12 col-md-12 p-0">
             <app-page-wrapper [gridClass]="'col-sm-12'" [title]="'average_revenue'">
                 <div id="chart" *ngIf="isBrowser"></div>
             </app-page-wrapper>
         </div>
-        <div class="col-xl-4 col-md-6 p-0" *hasPermission="'store.index'">
+        <!-- <div class="col-xl-4 col-md-6 p-0" *hasPermission="'store.index'">
             <app-page-wrapper [gridClass]="'col-sm-12'" [title]="'top_stores'">
                 <div button>
                     <select2 class="custom-select min-w-cls"
@@ -124,7 +124,7 @@
                     [hasCheckbox]="false">
                 </app-table>
             </app-page-wrapper>
-        </div>
+        </div> -->
     </div>
     <div class="row m-0">
         <div class="col-xl-5 col-md-6 p-0" *hasPermission="'product.index'">
@@ -198,7 +198,7 @@
         </div>
     </div>
     <div class="row m-0">
-        <div class="col-xl-7 col-md-6 p-0" *hasPermission="'product.index'">
+        <div class="col-xl-12 col-md-12 p-0" *hasPermission="'product.index'">
             <app-page-wrapper [gridClass]="'col-sm-12'" [title]="'product_stock_report'">
                 <div button>
                     <select2 class="custom-select min-w-cls"
@@ -221,7 +221,7 @@
                 </app-table>
             </app-page-wrapper>
         </div>
-        <div class="col-xl-5 col-md-6 p-0 overflow-hidden">
+        <!-- <div class="col-xl-5 col-md-6 p-0 overflow-hidden">
             <app-page-wrapper [gridClass]="'col-sm-12'" [title]="'latest_reviews'" *hasPermission="'review.index'">
                 <div button>
                     <a [routerLink]="['/review']"  class="txt-primary">{{ 'view_all' | translate }}</a>
@@ -272,6 +272,6 @@
                     <h4>{{ 'no_records_found' | translate }}</h4>
                 </div>
             </app-page-wrapper>
-        </div>
+        </div> -->
     </div>
 </section>

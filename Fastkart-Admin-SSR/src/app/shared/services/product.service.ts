@@ -13,8 +13,8 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   getProducts(payload?: Params): Observable<ProductModel> {
-    // return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
-    return this.http.get<ProductModel>(`${environment.apiURL}/products`, { params: payload });
+    return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
+    // return this.http.get<ProductModel>(`${environment.apiURL}/products`, { params: payload });
   }
 
 }

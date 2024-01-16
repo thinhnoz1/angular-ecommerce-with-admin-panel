@@ -18,4 +18,8 @@ export class OrderService {
     return this.http.get<OrderModel>(`${environment.URL}/order.json`, { params: payload });
   }
 
+  createPaymentUrl(payload?: Params): Observable<string> {
+    return this.http.post<string>(`${environment.apiURL}/orders/create_payment_url`, payload);
+  }
+
 }

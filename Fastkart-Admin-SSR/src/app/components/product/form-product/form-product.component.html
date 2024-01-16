@@ -26,20 +26,7 @@
                                         {{ 'description_is_required' | translate }}
                                     </div>
                                 </app-form-fields>
-                                <app-form-fields [labelClass]="'form-label-title col-sm-3 mb-0'" [gridClass]="'col-sm-9'" [label]="'store'" [for]="'store'" [required]="true" *ngIf="(setting$ | async )?.activation?.multivendor">
-                                    <select2 
-                                        class="custom-select" 
-                                        [placeholder]="'select_store' | translate"
-                                        [data]="(store$ | async)?.length ? (store$ | async) : []"
-                                        formControlName="store_id"
-                                        noResultMessage="{{ 'no_data_found' | translate }}"
-                                        id="store_id" 
-                                        resettable>
-                                    </select2>
-                                    <div class="invalid-feedback" *ngIf="form.controls['store_id'].touched && form.controls['store_id'].errors?.['required']">
-                                        {{ 'store_is_required' | translate }}
-                                    </div>
-                                </app-form-fields>
+                                
                             </div>
                         </ng-template>
                     </li>

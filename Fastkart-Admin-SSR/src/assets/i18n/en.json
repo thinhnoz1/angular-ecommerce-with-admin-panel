@@ -796,10 +796,10 @@
 
     "total_revenue": "Total Revenue",
     "total_orders": "Total Orders",
-    "total_stores": "Total Stores",
+    "total_stores": "Total Manufacturers",
     "total_user": "Total User",
     "average_revenue": "Average Revenue",
-    "top_stores": "Top Stores",
+    "top_stores": "Top Manufacturers",
     "top_selling_products": "Top Selling Products",
     "recent_orders": "Recent Orders",
     "product_stock_report": "Product Stock Report",

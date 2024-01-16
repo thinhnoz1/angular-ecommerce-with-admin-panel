@@ -124,7 +124,7 @@ exports.getCouponById = (id) => {
                 console.log(err);
                 reject({error: "Internal Server Error"});
             } else {
-                resolve(result[0]);
+                resolve({data:result[0]});
             }
         });
     });
@@ -198,6 +198,33 @@ exports.createCoupon = (couponData) => {
     });
 };
 
+exports.updateCoupon = (id, couponData) => {
+    return new Promise((resolve, reject) => {
+        const sqlQuery = `UPDATE coupons SET title = ?,
+        description = ?,
+        code = ?,
+        type = ?,
+        amount = ?,
+        min_spend = ?,
+        is_unlimited = ?,
+        usage_per_coupon = ?,
+        usage_per_customer = ?,
+        start_date = ?,
+        end_date = ?,
+        updated_at = NOW()
+      WHERE id = ?`;
+
+        db.query(sqlQuery, [couponData.title, couponData.description, couponData.code, couponData.type, couponData.amount, couponData.min_spend,
+            couponData.is_unlimited, couponData.usage_per_coupon, couponData.usage_per_customer, couponData.start_date, couponData.end_date, id], (err, result) => {
+            if (err) {
+                console.error(err);
+                reject({message: err, statusCode: 500});
+            } else {
+                resolve({message: "Coupon updated successfully", data: result, statusCode: 200});
+            }
+        });
+    })
+};
 exports.deleteCoupon = (id) => {
     return new Promise((resolve, reject) => {
         const deleteAt = new Date().toISOString().slice(0, 19).replace('T', ' ');

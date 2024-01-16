@@ -11,7 +11,9 @@ router.get("/", orderController.get_orders);
 router.get("/single", orderController.get_single_order);
 
 router.post("/create", orderController.create_order);
-
+router.get("/get-all", orderController.get_all_orders);
+router.put("/update/:id", orderController.update_order);
+router.get("/delete/:id", orderController.delete_order);
 
 router.post('/create_payment_url', async function (req, res, next) {
     const list_product_id = req.body.products.map(x => x.product_id);

@@ -1,7 +1,6 @@
 const couponService = require('../services/couponService');
 
 exports.get_all_coupons = (req, res) => {
-    const { id } = req.params;
 
     couponService.getAllCoupons()
         .then(result => {
@@ -29,6 +28,19 @@ exports.create_coupon = (req, res) => {
     const couponData = req.body; // Giả sử thông tin coupon được gửi trong body của request
 
     couponService.createCoupon(couponData)
+        .then(result => {
+            res.status(result.statusCode).json(result);
+        })
+        .catch(error => {
+            res.status(error.statusCode || 500).json(error);
+        });
+};
+
+exports.update_coupon = (req, res) => {
+    const { id } = req.params;
+    const couponData = req.body; // Giả sử thông tin coupon được gửi trong body của request
+
+    couponService.updateCoupon(id, couponData)
         .then(result => {
             res.status(result.statusCode).json(result);
         })

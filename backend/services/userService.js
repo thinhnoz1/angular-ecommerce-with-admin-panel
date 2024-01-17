@@ -56,7 +56,7 @@ exports.updateUser = async (params) => {
   });
 };
 
-exports.getTestUserInfo = async (params) => {
+exports.getUserInfo = async (params) => {
   const { userId } = params;
 
   if (!userId) throw { message: "userId was not provided", statusCode: 400 };
@@ -68,9 +68,15 @@ exports.getTestUserInfo = async (params) => {
 
         if (err) reject({ message: err, statusCode: 500 })
         else {
+          if (results.length === 0) {
+            reject({
+              message: "No user found!",
+              statusCode: 400,
+            });
+          }
           resolve({
             statusCode: 200,
-            data:  results.length ? results : null,
+            data:  results,
             total: results.length
           });
         }

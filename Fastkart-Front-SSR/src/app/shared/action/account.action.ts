@@ -1,9 +1,9 @@
 import { UserAddress } from "../interface/user.interface";
-import { AccountUser, AccountUserUpdatePassword } from "./../interface/account.interface";
+import { AccountGetById, AccountUser, AccountUserUpdatePassword } from "./../interface/account.interface";
 
 export class GetUserDetails {
   static readonly type = "[Account] User Get";
-  constructor(public id: number) {}
+  constructor(public payload: any) {}
 }
 
 export class UpdateUserProfile {

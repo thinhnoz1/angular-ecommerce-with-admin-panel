@@ -7,6 +7,7 @@ import { AccountUser, AccountUserUpdatePassword } from "./../interface/account.i
 import { AccountService } from "../services/account.service";
 import { NotificationService } from "../services/notification.service";
 import { Permission } from "../interface/role.interface";
+import { Router } from "@angular/router";
 
 export class AccountStateModel {
   user: AccountUser | null;
@@ -23,7 +24,9 @@ export class AccountStateModel {
 @Injectable()
 export class AccountState {
 
-  constructor(private accountService: AccountService) {}
+  constructor(private accountService: AccountService,
+    private router: Router,
+    private notificationService: NotificationService) {}
 
   @Selector()
   static user(state: AccountStateModel) {
@@ -36,16 +39,24 @@ export class AccountState {
   }
 
   @Action(GetUserDetails)
-  getUserDetails(ctx: StateContext<AccountStateModel>, id:number) {
-    return this.accountService.getUserDetails(id).pipe(
+  getUserDetails(ctx: StateContext<AccountStateModel>, action: GetUserDetails) {
+    if (!action || action.payload == undefined){
+      this.router.navigateByUrl('/auth/login');
+      return
+    } 
+    const payload = {
+      id: action.payload
+    }
+    return this.accountService.getUserDetails(payload).pipe(
       tap({
         next: result => { 
           ctx.patchState({
-            user: result,
+            user: result.data,
             permissions: result.permission,
           });
         },
         error: err => { 
+          this.notificationService.showError(err?.error?.message);
           throw new Error(err?.error?.message);
         }
       })

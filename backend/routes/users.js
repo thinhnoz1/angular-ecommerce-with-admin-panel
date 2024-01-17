@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 });
 
 // Get all users
-router.get("/get-test-user", userController.get_test_user_info);
+router.get("/get-user", userController.get_user_info);
 
 
 router.put("/:userId", userController.update_user);

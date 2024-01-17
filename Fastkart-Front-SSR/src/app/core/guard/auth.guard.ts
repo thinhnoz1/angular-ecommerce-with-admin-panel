@@ -24,7 +24,6 @@ export class AuthGuard {
     if(!this.store.selectSnapshot(state => state.auth && state.auth.access_token)) {
       return this.router.createUrlTree(['/auth/login']);
     }
-
     this.store.dispatch(new GetUserDetails(this.store.selectSnapshot(state => state.auth.id))).subscribe({
       complete: () => {
         return true

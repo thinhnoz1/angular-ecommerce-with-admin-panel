@@ -30,7 +30,7 @@ export class RegisterComponent {
       name: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
       phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
-      country_code: new FormControl('91', [Validators.required]),
+      country_code: new FormControl('84', [Validators.required]),
       password: new FormControl('', [Validators.required]),
       password_confirmation: new FormControl('', [Validators.required]),
     },{validator : CustomValidators.MatchValidator('password', 'password_confirmation')});
@@ -51,7 +51,7 @@ export class RegisterComponent {
     if(this.form.valid) {
       this.store.dispatch(new Register(this.form.value)).subscribe({
           complete: () => {
-            this.router.navigateByUrl('/account/dashboard');
+            this.router.navigateByUrl('/auth/login');
           }
         }
       );

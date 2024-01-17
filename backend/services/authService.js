@@ -67,7 +67,7 @@ exports.loginUser = async (params) => {
                   const token = jwt.sign({ data: result }, "secret");
                   resolve({
                     message: "Logged in successfully",
-                    data: result,
+                    data: result.pop(),
                     token: token
                   });
                 }
@@ -87,10 +87,10 @@ exports.loginUser = async (params) => {
 };
 
 exports.registerUser = async (params) => {
-  const { error } = registerValidation(params);
+  const { name, country_code, email, password, phone } = params;
+  const { error } = registerValidation({name, email, password});
   if (error) throw { message: error.details[0].message, statusCode: 400 };
 
-  const { fullName, email, password } = params;
   const hashedPassword = md5(password.toString());
 
   return new Promise((resolve, reject) => {
@@ -105,8 +105,8 @@ exports.registerUser = async (params) => {
           });
         } else if (result.length === 0) {
           db.query(
-            `INSERT INTO users (fname, email, password) VALUES (?,?,?)`,
-            [fullName, email, hashedPassword],
+            `INSERT INTO users (name, email, password, phone, country_code) VALUES (?,?,?,?,?)`,
+            [name, email, hashedPassword, phone, country_code],
             (err, result) => {
               if (err) {
                 reject({
@@ -115,11 +115,11 @@ exports.registerUser = async (params) => {
                   data: err,
                 });
               } else {
-                const token = jwt.sign({ data: result }, "secret");
+                // const token = jwt.sign({ data: result }, "secret");
                 resolve({
                   data: result,
                   message: "You have successfully registered.",
-                  token: token,
+                  token: '',
                   statusCode: 200,
                 });
               }

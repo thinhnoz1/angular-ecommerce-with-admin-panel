@@ -17,12 +17,12 @@ exports.update_user = async (req, res, next) => {
     });
 };
 
-exports.get_test_user_info = async (req, res, next) => {
-  const { userId = 22 } = req.query;
+exports.get_user_info = async (req, res, next) => {
+  const { id } = req.query;
 
-  userService.getTestUserInfo({ userId })
+  userService.getUserInfo({ userId: id })
     .then((result) => {
-      let { data, total } = result;
+      let { statusCode, data, total } = result;
       if (data) {
         addressService.getAddressesByUserId(data[0].id)
           .then((addressRes) => {
@@ -31,17 +31,20 @@ exports.get_test_user_info = async (req, res, next) => {
               i.role = roleHelper.getById(i.role_id);
               return i;
             });
-            res.json(data[0]);
+            res.status(statusCode).send({ data: data[0] });
           })
           .catch((err) => {
             console.log(err.message)
+            const { statusCode = 400, message } = err;
+            res.status(statusCode).send({ message }) && next(err);
           });
       }
       else {
-        res.json(data);
+        res.status(statusCode).send({ message });
       }
     })
     .catch((err) => {
+      console.log(err.message)
       const { statusCode = 400, message } = err;
       res.status(statusCode).send({ message }) && next(err);
     });

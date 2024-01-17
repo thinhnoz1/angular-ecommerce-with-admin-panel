@@ -35,3 +35,7 @@ export interface AccountUserUpdatePassword {
     new_password: string;
     confirm_password: string;
 }
+
+export interface AccountGetById {
+    id: number
+}

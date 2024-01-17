@@ -27,9 +27,6 @@ export interface AuthStateModel {
 })
 @Injectable()
 export class AuthState {
-  private userSubject: BehaviorSubject<any>;
-  public user: Observable<any>;
-
   constructor(private store: Store, public router: Router,
     private notificationService: NotificationService,
     private _token: TokenStorageService,
@@ -38,17 +35,6 @@ export class AuthState {
 
 
   ngxsOnInit(ctx: StateContext<AuthStateModel>) {
-    this.userSubject = new BehaviorSubject<any>(this._token.getUser());
-    this.user = this.userSubject.asObservable();
-
-    const cookieVal = this.cookieService.get('jwt');
-    // Pre Fake Login (if you are using ap
-    // ctx.patchState({
-    //   email: this._token.getUser().data.email,
-    //   token: cookieVal,
-    //   access_token: this._token.getUser().token,
-    //   id: this._token.getUser().data.id
-    // })
   }
 
   @Selector()
@@ -73,7 +59,23 @@ export class AuthState {
 
   @Action(Register)
   register(ctx: StateContext<AuthStateModel>, action: Register) {
+    if (action.payload.password != action.payload.password_confirmation){
+      this.notificationService.showError("Password confirmation does not match!");
+      return;
+    }
     // Register Logic Here
+    const res = this.authService.register(action.payload).pipe(
+      tap({
+        next: (result: any) => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError(err?.error?.message);
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
+    return res
   }
 
   @Action(Login)
@@ -89,8 +91,8 @@ export class AuthState {
             token: cookieVal,
             access_token: result.token,
             id: result.data.id
-          })
-          this.store.dispatch(new GetUserDetails(result.data.id));
+          });
+          this.store.dispatch(new GetUserDetails( result.data.id));
 
         },
         error: err => {

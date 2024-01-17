@@ -10,7 +10,7 @@ var options = {
 
 const registerValidation = (data) => {
   const schema = Joi.object({
-    fullName: Joi.string().required().strict(),
+    name: Joi.string().required().strict(),
     email: Joi.string().email().required().strict(),
     password: Joi.string().min(6).required().strict(),
   });
@@ -32,7 +32,7 @@ const updateUserValidation = (data) => {
     userId: Joi.string().required().strict(),
     email: Joi.string().email().required().strict(),
     password: Joi.string().min(6).required().strict(),
-    fullName: Joi.string().required().strict(),
+    name: Joi.string().required().strict(),
   });
 
   return schema.validate(data, options);

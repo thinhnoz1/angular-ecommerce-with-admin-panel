@@ -5,18 +5,63 @@ const request = require('request');
 const moment = require('moment');
 const db = require("../database/db");
 
-
-router.get("/", orderController.get_orders);
-
 router.get("/single", orderController.get_single_order);
 
-router.post("/create", orderController.create_order);
-router.get("/get-all", orderController.get_all_orders);
+router.get("/get-all", orderController.get_orders);
 router.put("/update/:id", orderController.update_order);
 router.get("/delete/:id", orderController.delete_order);
 
+router.post('/create', async function (req, res, next) {
+    const list_product_id = req.body.products?.map(x => x.product_id);
+    let list_products = [];
+    let query = `SELECT id, sale_price FROM products WHERE id IN (${list_product_id.join(',')})`;
+    let db_getProduct = new Promise((resolve, reject) => {
+        db.query(
+            query,
+            (err, results) => {
+                if (err) {
+                    console.log(err);
+                    reject(err)
+                }
+                else
+                    resolve(results);
+            }
+        )
+    });
+
+    await db_getProduct
+        .then((result) => {
+            list_products = result;
+        })
+        .catch((err) => {
+            res.status(500).json(err);
+            return false;
+        })
+    // Tam thoi chua tinh + thue (thue phai get tu db)
+    const order_amount = list_products.reduce((accumulator, object) => {
+        return accumulator + object.sale_price * req.body.products.find(x => parseInt(x.product_id) == parseInt(object.id)).quantity;
+    }, 0);
+   
+    const createDate = moment(new Date()).format('YYMMDDHHmmss');
+    const orderId = createDate + Math.floor(Math.random() * 1000);
+    const amount = parseInt(order_amount + order_amount * 8 / 100) ; // + 8% thue VAT
+
+    const req_modified = req;
+    req_modified.body.amount = order_amount;
+    req_modified.body.tax_total = order_amount * 8 / 100;
+    req_modified.body.total = amount;
+    req_modified.body.order_number = orderId;
+    orderController.create_order(req_modified, res, next).then(result => {
+        res.status(200).json({vnpUrl: '', orderId: result.id });
+    }).catch(err => {
+        const { statusCode = 400, message } = err;
+        console.log(message);
+        res.status(400).json(null);
+    })
+});
+
 router.post('/create_payment_url', async function (req, res, next) {
-    const list_product_id = req.body.products.map(x => x.product_id);
+    const list_product_id = req.body.products?.map(x => x.product_id);
     let list_products = [];
     let query = `SELECT id, sale_price FROM products WHERE id IN (${list_product_id.join(',')})`;
     let db_getProduct = new Promise((resolve, reject) => {
@@ -63,8 +108,9 @@ router.post('/create_payment_url', async function (req, res, next) {
     let secretKey = config.get('vnp_HashSecret');
     let vnpUrl = config.get('vnp_Url');
     let returnUrl = config.get('vnp_ReturnUrl');
-    let orderId = moment(date).format('DDHHmmss');
-    let amount = order_amount*1000 + order_amount*1000*8/100; // + 8% thue VAT
+    let orderId = moment(date).format('YYMMDDHHmmss') + Math.floor(Math.random() * 1000);
+    let amount = parseInt(order_amount * (25000) + order_amount * (25000) * 8 / 100) ; // + 8% thue VAT
+    let usd_amount = parseInt(order_amount + order_amount * 8 / 100) ; // + 8% thue VAT
     let bankCode = order_bankCode;
 
     let locale = order_language;
@@ -81,7 +127,7 @@ router.post('/create_payment_url', async function (req, res, next) {
     vnp_Params['vnp_TxnRef'] = orderId;
     vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
     vnp_Params['vnp_OrderType'] = 'other';
-    vnp_Params['vnp_Amount'] = Math.round(amount)  * 100;
+    vnp_Params['vnp_Amount'] = amount;
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     vnp_Params['vnp_IpAddr'] = ipAddr;
     vnp_Params['vnp_CreateDate'] = createDate;
@@ -99,9 +145,18 @@ router.post('/create_payment_url', async function (req, res, next) {
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
-    res.status(200).json(vnpUrl);
-
-    // res.redirect(vnpUrl)
+    const req_modified = req;
+    req_modified.body.amount = order_amount;
+    req_modified.body.tax_total = order_amount * 8 / 100;
+    req_modified.body.total = usd_amount;
+    req_modified.body.order_number = orderId;
+    orderController.create_order(req_modified, res, next).then(result => {
+        res.status(200).json({vnpUrl, orderId: result.id });
+    }).catch(err => {
+        const { statusCode = 400, message } = err;
+        console.log(message);
+        res.status(400).json(null);
+    })
 });
 
 router.get('/vnpay_return', function (req, res, next) {
@@ -126,11 +181,21 @@ router.get('/vnpay_return', function (req, res, next) {
 
     if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-        console.log("Thanh cong");
-        res.render('success', { code: vnp_Params['vnp_ResponseCode'] })
+        // res.render('success', { code: vnp_Params['vnp_ResponseCode'] })
+
+        orderController.update_order_payment_status(vnp_Params['vnp_TxnRef']).then(result => {
+            console.log("Thanh cong");
+            res.status(200).send('Thành công, bạn có thể đóng cửa sổ này !');
+        }).catch((err) => {
+            res.status(err.statusCode || 500).send();
+        });
+
+
     } else {
         console.log("That bai");
-        res.render('success', { code: '97' })
+        // res.render('success', { code: '97' })
+        res.status(200).json({ result: false, responseCode: '97' });
+
     }
 });
 

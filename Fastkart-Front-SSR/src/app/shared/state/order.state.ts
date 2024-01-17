@@ -8,6 +8,9 @@ import { OrderService } from "../services/order.service";
 import { ClearCart } from "../action/cart.action";
 import { CartState } from "./cart.state";
 import { Cart } from "../interface/cart.interface";
+import { AccountState } from "./account.state";
+import { AccountUser } from "../interface/account.interface";
+import { User } from "../interface/user.interface";
 
 export class OrderStateModel {
   order = {
@@ -33,6 +36,7 @@ export class OrderStateModel {
 export class OrderState {
 
   @Select(CartState.cartItems) cartItem$: Observable<Cart[]>;
+  @Select(AccountState.user) user$: Observable<AccountUser>;
 
   constructor(private store: Store,
     private router: Router,
@@ -55,6 +59,11 @@ export class OrderState {
 
   @Action(GetOrders)
   getOrders(ctx: StateContext<OrderStateModel>, action: GetOrders) {
+    let payload = action?.payload;
+    this.user$.subscribe(x => {
+      if (payload)
+        payload.userId = x.id;
+    });
     return this.orderService.getOrders(action?.payload).pipe(
       tap({
         next: result => {
@@ -75,16 +84,28 @@ export class OrderState {
   @Action(ViewOrder)
   viewOrder(ctx: StateContext<OrderStateModel>, { id }: ViewOrder) {
     this.orderService.skeletonLoader = true;
-    return this.orderService.getOrders().pipe(
+    const payload = {
+      orderId: id,
+      userId: 0
+    };
+    let current_user_info: User;
+    this.user$.subscribe(x => {
+      payload.userId = x.id;
+      current_user_info = x;
+    });
+    return this.orderService.getOrderById(payload).pipe(
       tap({
         next: result => {
           const state = ctx.getState();
-          const order = result.data.find(order => order.order_number == id);
+          const order = result.data.map(x => { x.consumer = current_user_info; return x }).find(order => order.id == id);
 
-          ctx.patchState({
-            ...state,
-            selectedOrder: order
-          });
+          if (order)
+            ctx.patchState({
+              ...state,
+              selectedOrder: order
+            });
+          // else
+          //   this.router.navigateByUrl(`/404`);
         },
         error: err => {
           throw new Error(err?.error?.message);
@@ -103,8 +124,8 @@ export class OrderState {
     console.log("Order.state");
     // Calculate using cart information
     this.cartItem$.subscribe(cartItem => {
-      const sub_total_value= cartItem.reduce((accumulator, object) => {
-        return accumulator + (object.product.sale_price*object.quantity);
+      const sub_total_value = cartItem.reduce((accumulator, object) => {
+        return accumulator + (object.product.sale_price * object.quantity);
       }, 0);
       const order = {
         total: {
@@ -115,8 +136,8 @@ export class OrderState {
           points_amount: 10,
           shipping_total: 0,
           sub_total: sub_total_value,
-          tax_total: sub_total_value*8/100,
-          total: sub_total_value+(sub_total_value*8/100),
+          tax_total: sub_total_value * 8 / 100,
+          total: sub_total_value + (sub_total_value * 8 / 100),
           wallet_balance: 84.4,
         }
       }
@@ -130,23 +151,58 @@ export class OrderState {
 
   @Action(PlaceOrder)
   placeOrder(ctx: StateContext<OrderStateModel>, action: PlaceOrder) {
-    return this.orderService.createPaymentUrl(action?.payload).pipe(
-      tap({
-        next: result => {
-          // ctx.patchState({
-          //   order: {
-          //     data: result.data,
-          //     total: result?.total ? result?.total : result.data?.length
-          //   }
-          // });
-          console.log(result);
-          (window as any).open(result, "_blank");
-        },
-        error: err => {
-          throw new Error(err?.error?.message);
-        }
-      })
-    );
+    const payload = action?.payload;
+    this.user$.subscribe(x => {
+      payload.consumer_id = x.id;
+    });
+    if (action?.payload.payment_method == 'VNPAY')
+      return this.orderService.createPaymentUrl(payload).pipe(
+        tap({
+          next: result => {
+            // ctx.patchState({
+            //   order: {
+            //     data: result.data,
+            //     total: result?.total ? result?.total : result.data?.length
+            //   }
+            // });
+            if (result) {
+              this.store.dispatch(new ClearCart());
+              this.router.navigateByUrl(`/account/order/details/${result.orderId}`);
+              (window as any).open(result.vnpUrl, "_blank");
+            }
+            else
+              this.router.navigateByUrl(`/account/order/`);
+
+          },
+          error: err => {
+            throw new Error(err?.error?.message);
+          }
+        })
+      );
+    else
+      return this.orderService.createOrder(payload).pipe(
+        tap({
+          next: result => {
+            // ctx.patchState({
+            //   order: {
+            //     data: result.data,
+            //     total: result?.total ? result?.total : result.data?.length
+            //   }
+            // });
+            if (result) {
+              this.store.dispatch(new ClearCart());
+              this.router.navigateByUrl(`/account/order/details/${result.orderId}`);
+              // (window as any).open(result.vnpUrl, "_blank");
+            }
+            else
+              this.router.navigateByUrl(`/account/order`);
+
+          },
+          error: err => {
+            throw new Error(err?.error?.message);
+          }
+        })
+      );
     //this.router.navigateByUrl(`/account/order/details/1000`);
   }
 

@@ -80,20 +80,24 @@
           "status": true
         },
         {
-          "name": "paypal",
+          "name": "VNPAY",
           "status": true
+        },
+        {
+          "name": "paypal",
+          "status": false
         },
         {
           "name": "stripe",
-          "status": true
+          "status": false
         },
         {
           "name": "mollie",
-          "status": true
+          "status": false
         },
         {
           "name": "razorpay",
-          "status": true
+          "status": false
         }
       ]
     }

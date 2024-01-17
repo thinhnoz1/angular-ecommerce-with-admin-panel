@@ -114,18 +114,6 @@
             "link": "account/order"
           },
           {
-            "label": "Wishlist",
-            "link": "wishlist"
-          },
-          {
-            "label": "Compare",
-            "link": "compare"
-          },
-          {
-            "label": "FAQ's",
-            "link": "faq"
-          },
-          {
             "label": "Contact Us",
             "link": "contact-us"
           }
@@ -138,18 +126,6 @@
           {
             "label": "Collections",
             "link": "collections"
-          },
-          {
-            "label": "About",
-            "link": "about-us"
-          },
-          {
-            "label": "Offers",
-            "link": "offer"
-          },
-          {
-            "label": "Search",
-            "link": "search"
           }
         ],
         "support_number": "+84-1900-10 không có",
@@ -249,22 +225,22 @@
         "detail_1": {
           "label": "Phone",
           "icon": "ri-phone-line",
-          "text": "(+1) 618 190 496"
+          "text": "(+84) 1900-10 không có"
         },
         "detail_2": {
           "label": "Email",
           "icon": "ri-mail-line",
-          "text": "support@fastkart.com"
+          "text": "support@example.com"
         },
         "detail_3": {
-          "label": "London Office",
+          "label": "Hanoi Office",
           "icon": "ri-map-pin-line",
-          "text": "Cruce Casa de Postas 29"
+          "text": "Cau Giay, Hanoi"
         },
         "detail_4": {
-          "label": "Bournemouth Office",
+          "label": "Washington Office",
           "icon": "ri-building-line",
-          "text": "Visitación de la Encina 22"
+          "text": "The White House, 1600 Pennsylvania Avenue NW, Washington, DC 20500, United States"
         }
       },
       "error_page": {

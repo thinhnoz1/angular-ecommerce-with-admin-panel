@@ -16,6 +16,7 @@
             </div>
         </div>
     </div>
+    <!-- sub_order -->
     <div class="mb-4">
         <div class="tracking-panel">
             <ul *ngIf="order && !order.sub_orders.length">
@@ -55,7 +56,6 @@
                             <th scope="col">{{ 'price' | translate }}</th>
                             <th scope="col">{{ 'quantity' | translate }}</th>
                             <th scope="col">{{ 'subtotal' | translate }}</th>
-                            <th scope="col">{{ 'action' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,26 +68,18 @@
                                         : 'assets/images/product.png'" class="img-fluid" alt="product">
                             </td>
                             <td>
-                                <h6>{{ product?.pivot?.variation ? product?.pivot?.variation?.name : product?.name }}</h6>
+                                <h6>{{ product?.name }}</h6>
                             </td>
                             <td>
-                                <h6>{{ product?.pivot?.single_price | currencySymbol }}</h6>
+                                <h6>{{ product?.sale_price | currencySymbol }}</h6>
                             </td>
                             <td>
-                                <h6>{{ product?.pivot?.quantity }}</h6>
+                                <h6>{{ product?.quantity }}</h6>
                             </td>
                             <td>
-                                <h6>{{ product?.pivot?.subtotal | currencySymbol }}</h6>
+                                <h6>{{ product?.sub_total | currencySymbol }}</h6>
                             </td>
-                            <td>
-                              <a  href="javascript:void(0)"
-                                *ngIf="product?.is_return === 1 && product?.pivot?.is_refunded === 0 &&
-                                order.payment_status === 'COMPLETED' && order.order_status.slug == 'delivered';
-                                else noRefund" (click)="refundModal.openModal(product)">
-                                  {{ 'ask_for_refund' | translate }}
-                                </a>
-                              <ng-template #noRefund>-</ng-template>
-                            </td>
+                            
                         </tr>
                     </tbody>
                 </table>
@@ -149,11 +141,10 @@
                     <div class="tracking-total tracking-wrapper">
                         <ul>
                             <li>{{ 'subtotal' | translate }} <span>{{ (order.amount ? order.amount : 0) | currencySymbol }}</span></li>
-                            <li>{{ 'shipping'| translate }} <span>{{ (order.shipping_total ? order.shipping_total : 0) | currencySymbol }}</span></li>
+                         
                             <li>{{ 'tax'| translate }} <span>{{ (order.tax_total ? order.tax_total : 0) | currencySymbol }}</span></li>
-                            <li class="txt-primary fw-bold" *ngIf="order.points_amount != 0">{{ 'points'| translate }} <span>{{ order.points_amount | currencySymbol }}</span></li>
-                            <li class="txt-primary fw-bold" *ngIf="order.wallet_balance != 0">{{ 'wallet_balance'| translate }} <span>{{ order.wallet_balance | currencySymbol }}</span></li>
-                            <li class="txt-primary fw-bold" *ngIf="order.coupon_total_discount != 0">{{ 'coupon_discount'| translate }} <span>{{ order.coupon_total_discount | currencySymbol }}</span></li>
+                           
+                            <!-- <li class="txt-primary fw-bold" *ngIf="order.coupon_total_discount != 0">{{ 'coupon_discount'| translate }} <span>{{ order.coupon_total_discount | currencySymbol }}</span></li> -->
                             <li>{{ 'total'| translate }} <span>{{ (order.total ? order.total : 0) | currencySymbol }}</span></li>
                         </ul>
                     </div>

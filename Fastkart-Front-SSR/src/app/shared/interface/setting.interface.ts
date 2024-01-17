@@ -140,11 +140,18 @@ export interface GoogleReCaptcha {
 
 export interface PaymentMethods {
    paypal: Paypal;
+   vnpay: VNPay;
    stripe:StripeAndRazorpay;
    razorpay: StripeAndRazorpay;
    mollie: Mollie;
    cod: COD;
    cash_on_delivery: CashOnDelivery;
+}
+
+export interface VNPay {
+   key: string;
+   secret: string;
+   status: number| boolean;
 }
 
 export interface CashOnDelivery {

@@ -87,6 +87,7 @@ export interface Product {
     created_at?: string;
     updated_at?: string;
     deleted_at?: string;
+    sub_total?: number;
 }
 
 export interface PivotProduct {

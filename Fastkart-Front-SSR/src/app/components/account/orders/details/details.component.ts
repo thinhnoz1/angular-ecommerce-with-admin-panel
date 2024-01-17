@@ -46,6 +46,7 @@ export class OrderDetailsComponent {
       )
       .subscribe(order => {
         this.order = order!
+        console.log(order);
       });
   }
 
@@ -54,4 +55,7 @@ export class OrderDetailsComponent {
     this.destroy$.complete();
   }
 
+  calculateTotalPrice(a:any, b:any){
+    return a*b;
+  }
 }

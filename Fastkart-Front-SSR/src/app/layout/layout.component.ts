@@ -33,7 +33,7 @@ export class LayoutComponent {
 
     this.themeOptionService.preloader = true;
 
-    this.store.dispatch(new GetUserDetails());
+    this.store.dispatch(new GetUserDetails(this.store.selectSnapshot(state => state.auth.id)));
 
     const getCategories$ = this.store.dispatch(new GetCategories({ status: 1 }));
     const getBlog$ = this.store.dispatch(new GetBlogs({ status: 1, paginate: 10 }));

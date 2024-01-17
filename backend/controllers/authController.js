@@ -7,7 +7,10 @@ exports.login_user = async (req, res, next) => {
     .then((result) => {
       console.log(result);
       const { statusCode = 200, message, data, token } = result;
-      res.status(statusCode).send({ message, data, token });
+      res.cookie("jwt", token, {
+        httpOnly: true,
+      });
+      res.status(statusCode).send({ message, data, token: token.substring(0, 15) });
     })
     .catch((err) => {
       const { statusCode = 400, message, data } = err;

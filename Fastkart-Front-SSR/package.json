@@ -39,6 +39,7 @@
     "bootstrap": "^5.2.3",
     "feather-icons": "^4.29.0",
     "ng-select2-component": "^10.0.0",
+    "ngx-cookie-service": "^17.0.1",
     "ngx-image-zoom": "^2.1.0",
     "ngx-owl-carousel-o": "^17.0.0",
     "ngx-slider-v2": "^17.0.0",

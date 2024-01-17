@@ -24,6 +24,7 @@ export class MyAccountComponent {
   constructor(private store: Store) {}
 
   logout() {
+    this.ConfirmationModal.ngOnDestroy();
     this.store.dispatch(new Logout());
   }
 

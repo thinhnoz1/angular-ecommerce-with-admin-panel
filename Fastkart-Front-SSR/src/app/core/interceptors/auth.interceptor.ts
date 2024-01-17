@@ -41,7 +41,6 @@ export class AuthInterceptor implements HttpInterceptor {
     if(this.isMaintenanceModeOn) {
       this.router.navigate(['/maintenance']);
     }
-
     const token = this.store.selectSnapshot(state => state.auth.access_token);
     if (token) {
       req = req.clone({

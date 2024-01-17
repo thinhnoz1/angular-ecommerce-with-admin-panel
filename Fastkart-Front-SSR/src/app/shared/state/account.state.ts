@@ -36,8 +36,8 @@ export class AccountState {
   }
 
   @Action(GetUserDetails)
-  getUserDetails(ctx: StateContext<AccountStateModel>) {
-    return this.accountService.getUserDetails().pipe(
+  getUserDetails(ctx: StateContext<AccountStateModel>, id:number) {
+    return this.accountService.getUserDetails(id).pipe(
       tap({
         next: result => { 
           ctx.patchState({

@@ -5,6 +5,8 @@ const {
 const db = require("../database/db");
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
+const addressService = require("../services/addressService");
+const roleHelper = require("../helpers/roleHelper");
 
 exports.loginUser = async (params) => {
   const { error } = loginValidation(params);
@@ -34,12 +36,50 @@ exports.loginUser = async (params) => {
         }
 
         if (result.length > 0) {
-          const token = jwt.sign({ data: result }, "secret");
-          resolve({
-            message: "Logged in successfully",
-            data: result,
-            token,
-          });
+
+          addressService.getAddressesByUserId(result[0].id)
+            .then(address_result => {
+              result = result.map(i => {
+                i.address = address_result.data,
+                  i.role = roleHelper.getById(result[0].role_id)
+                return i;
+              });
+
+              // Query to get profile image
+              db.query(
+                "SELECT * FROM images WHERE id = ?",
+                [result[0].profile_image_id],
+                (err, img_result) => {
+                  if (err) {
+                    reject({
+                      data: err,
+                      message: "Something went wrong, please try again",
+                      statusCode: 400,
+                    });
+                  }
+
+                  result = result.map(i => {
+                    i.profile_image = img_result.pop()
+                    return i;
+                  });
+
+                  // Return login data 
+                  const token = jwt.sign({ data: result }, "secret");
+                  resolve({
+                    message: "Logged in successfully",
+                    data: result,
+                    token: token
+                  });
+                }
+              );
+            })
+            .catch((err) => {
+              const { statusCode = 400, message, data } = err;
+              res.status(statusCode).send({ message, data }) && next(err);
+            });
+
+
+          
         }
       }
     );

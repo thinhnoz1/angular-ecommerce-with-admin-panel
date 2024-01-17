@@ -4,11 +4,16 @@ import { Router } from '@angular/router';
 import { AccountClear, GetUserDetails } from "../action/account.action";
 import { Register, Login, ForgotPassWord, VerifyEmailOtp, UpdatePassword, Logout, AuthClear } from "../action/auth.action";
 import { NotificationService } from "../services/notification.service";
+import { TokenStorageService } from "../services/token-storage.service";
+import { BehaviorSubject, Observable, tap } from "rxjs";
+import { AuthService } from "../services/auth.service";
+import { CookieService } from 'ngx-cookie-service';
 
 export interface AuthStateModel {
   email: String;
   token: String | Number;
   access_token: String | null;
+  id?: number
 }
 
 @State<AuthStateModel>({
@@ -16,23 +21,34 @@ export interface AuthStateModel {
   defaults: {
     email: '',
     token: '',
-    access_token: ''
+    access_token: '',
+    id: 0
   },
 })
 @Injectable()
 export class AuthState {
+  private userSubject: BehaviorSubject<any>;
+  public user: Observable<any>;
 
   constructor(private store: Store, public router: Router,
-    private notificationService: NotificationService) {}
+    private notificationService: NotificationService,
+    private _token: TokenStorageService,
+    private authService: AuthService,
+    private cookieService: CookieService) { }
 
 
   ngxsOnInit(ctx: StateContext<AuthStateModel>) {
+    this.userSubject = new BehaviorSubject<any>(this._token.getUser());
+    this.user = this.userSubject.asObservable();
+
+    const cookieVal = this.cookieService.get('jwt');
     // Pre Fake Login (if you are using ap
-    ctx.patchState({
-      email: 'john.customer@example.com',
-      token: '',
-      access_token: '115|laravel_sanctum_mp1jyyMyKeE4qVsD1bKrnSycnmInkFXXIrxKv49w49d2a2c5'
-    })
+    // ctx.patchState({
+    //   email: this._token.getUser().data.email,
+    //   token: cookieVal,
+    //   access_token: this._token.getUser().token,
+    //   id: this._token.getUser().data.id
+    // })
   }
 
   @Selector()
@@ -63,7 +79,28 @@ export class AuthState {
   @Action(Login)
   login(ctx: StateContext<AuthStateModel>, action: Login) {
     // Login Logic Here
-    this.store.dispatch(new GetUserDetails());
+    const res = this.authService.login(action.payload).pipe(
+      tap({
+        next: (result: any) => {
+          // const state = ctx.getState();
+          const cookieVal = this.cookieService.get('jwt');
+          ctx.patchState({
+            email: result.data.email,
+            token: cookieVal,
+            access_token: result.token,
+            id: result.data.id
+          })
+          this.store.dispatch(new GetUserDetails(result.data.id));
+
+        },
+        error: err => {
+          this.notificationService.showError(err?.error?.message);
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
+    return res
+
   }
 
   @Action(ForgotPassWord)
@@ -84,15 +121,24 @@ export class AuthState {
   @Action(Logout)
   logout(ctx: StateContext<AuthStateModel>) {
     // Logout LOgic Here
-  }
-
-  @Action(AuthClear)
-  authClear(ctx: StateContext<AuthStateModel>){
     ctx.patchState({
       email: '',
       token: '',
       access_token: null,
     });
+    this._token.clearStorage();
+    this.store.dispatch(new AccountClear());
+    this.notificationService.showSuccess("Logout sucessfully!");
+  }
+
+  @Action(AuthClear)
+  authClear(ctx: StateContext<AuthStateModel>) {
+    ctx.patchState({
+      email: '',
+      token: '',
+      access_token: null,
+    });
+    this._token.clearStorage();
     this.store.dispatch(new AccountClear());
   }
 

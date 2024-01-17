@@ -32,9 +32,9 @@ export class QuestionsAnswersComponent {
   @Select(AccountState.user) user$: Observable<AccountUser>;
 
   constructor(private store: Store, public questionAnswersService: QuestionsAnswersService){
-    this.isLogin = !!this.store.selectSnapshot(state => state.auth && state.auth.access_token)
+    this.isLogin = !!this.store.selectSnapshot(state => state.auth && state.auth.access_token);
     if(this.isLogin){
-      this.store.dispatch(new GetUserDetails());
+      this.store.dispatch(new GetUserDetails(this.store.selectSnapshot(state => state.auth.id)));
     }
   }
 

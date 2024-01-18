@@ -121,7 +121,6 @@ export class OrderState {
   checkout(ctx: StateContext<OrderStateModel>, action: Checkout) {
 
     const state = ctx.getState();
-    console.log("Order.state");
     // Calculate using cart information
     this.cartItem$.subscribe(cartItem => {
       const sub_total_value = cartItem.reduce((accumulator, object) => {

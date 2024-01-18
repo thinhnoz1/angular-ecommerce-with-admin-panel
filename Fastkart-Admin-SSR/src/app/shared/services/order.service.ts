@@ -10,10 +10,27 @@ import { CheckoutPayload, Order, OrderModel, OrderCheckout } from '../interface/
 })
 export class OrderService {
 
+  public skeletonLoader: boolean = false;
+
   constructor(private http: HttpClient) {}
 
-  getOrders(payload?: Params): Observable<OrderModel> {
+  getOrdersTest(payload?: Params): Observable<OrderModel> {
     return this.http.get<OrderModel>(`${environment.URL}/order.json`, { params: payload });
   }
- 
+
+  getOrders(payload?: Params): Observable<OrderModel> {
+    return this.http.get<OrderModel>(`${environment.apiURL}/orders/get-all`, { params: payload });
+  }
+
+  getOrderById(payload?: Params): Observable<OrderModel> {
+    return this.http.get<OrderModel>(`${environment.apiURL}/orders/single`, { params: payload });
+  }
+
+  createPaymentUrl(payload?: Params): Observable<any> {
+    return this.http.post<any>(`${environment.apiURL}/orders/create_payment_url`, payload);
+  }
+
+  createOrder(payload?: Params): Observable<any> {
+    return this.http.post<any>(`${environment.apiURL}/orders/create`, payload);
+  }
 }

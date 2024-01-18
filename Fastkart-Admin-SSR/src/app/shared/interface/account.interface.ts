@@ -1,6 +1,8 @@
 import { Attachment } from "./attachment.interface";
+import { PaymentDetails } from "./payment-details.interface";
 import { Role, Permission } from "./role.interface";
 import { Stores } from "./store.interface";
+import { UserAddress } from "./user.interface";
 import { Wallet } from "./wallet.interface";
 
 export interface AccountUser {
@@ -19,8 +21,13 @@ export interface AccountUser {
     created_at?: string;
     updated_at?: string;
     deleted_at?: string;
-    role: Role;
     permission: Permission[];
+    role?: Role;
+    role_id?: number;
+    role_name?: string;
+    address?: UserAddress[];
+    is_approved?: boolean;
+    payment_account?: PaymentDetails;
 }
 
 export interface AccountUserUpdatePassword {

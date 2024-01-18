@@ -3,6 +3,7 @@ import { AccountUser, AccountUserUpdatePassword } from "./../interface/account.i
 
 export class GetUserDetails {
   static readonly type = "[Account] User Get";
+  constructor(public payload: any) {}
 }
 
 export class UpdateUserProfile {

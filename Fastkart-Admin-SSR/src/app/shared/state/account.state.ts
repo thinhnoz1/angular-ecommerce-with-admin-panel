@@ -45,17 +45,25 @@ export class AccountState {
   }
 
   @Action(GetUserDetails)
-  getUserDetails(ctx: StateContext<AccountStateModel>) {
-    return this.accountService.getUserDetails().pipe(
+  getUserDetails(ctx: StateContext<AccountStateModel>, action: GetUserDetails) {
+    if (!action || action.payload == undefined){
+      this.router.navigateByUrl('/auth/login');
+      return
+    } 
+    const payload = {
+      id: action.payload
+    }
+    return this.accountService.getUserDetails(payload).pipe(
       tap({
         next: result => { 
           ctx.patchState({
-            user: result,
-            permissions: result.permission,
-            roleName: result.role.name
+            user: result.data,
+            permissions: result.data.permission,
+            roleName: result.data.role.name
           });
         },
         error: err => { 
+          this.notificationService.showError(err?.error?.message);
           throw new Error(err?.error?.message);
         }
       })

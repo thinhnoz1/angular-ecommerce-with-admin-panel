@@ -1,12 +1,17 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Action, Selector, State, StateContext } from "@ngxs/store";
-import { tap } from "rxjs";
+import { Action, Select, Selector, State, StateContext, Store } from "@ngxs/store";
+import { Observable, tap } from "rxjs";
 import { GetOrders, SelectUser, ViewOrder, Checkout, PlaceOrder, UpdateOrderStatus, Clear } from "../action/order.action";
 import { Order, OrderCheckout } from "../interface/order.interface";
 import { User } from "../interface/user.interface";
 import { UserService } from "../services/user.service";
 import { OrderService } from "../services/order.service";
+import { CartState } from "./cart.state";
+import { AccountState } from "./account.state";
+import { AccountUser } from "../interface/account.interface";
+import { Cart } from "../interface/cart.interface";
+import { ClearCart } from "../action/cart.action";
 
 export class OrderStateModel {
   order = {
@@ -32,8 +37,10 @@ export class OrderStateModel {
 })
 @Injectable()
 export class OrderState {
-  
-  constructor(private router: Router,
+  @Select(CartState.cartItems) cartItem$: Observable<Cart[]>;
+  @Select(AccountState.user) user$: Observable<AccountUser>;
+
+  constructor(private store: Store,private router: Router,
     private orderService: OrderService,
     private userService: UserService) {}
 
@@ -59,9 +66,14 @@ export class OrderState {
 
   @Action(GetOrders)
   getOrders(ctx: StateContext<OrderStateModel>, action: GetOrders) {
+    let payload = action?.payload;
+    this.user$.subscribe(x => {
+      if (payload)
+        payload.userId = x.id;
+    });
     return this.orderService.getOrders(action?.payload).pipe(
       tap({
-        next: result => { 
+        next: result => {
           ctx.patchState({
             order: {
               data: result.data,
@@ -69,7 +81,7 @@ export class OrderState {
             }
           });
         },
-        error: err => { 
+        error: err => {
           throw new Error(err?.error?.message);
         }
       })
@@ -97,53 +109,127 @@ export class OrderState {
 
   @Action(ViewOrder)
   viewOrder(ctx: StateContext<OrderStateModel>, { id }: ViewOrder) {
-    return this.orderService.getOrders().pipe(
+    this.orderService.skeletonLoader = true;
+    const payload = {
+      orderId: id,
+      userId: 0
+    };
+    let current_user_info: User;
+    this.user$.subscribe(x => {
+      payload.userId = x.id;
+      current_user_info = x;
+    });
+    return this.orderService.getOrderById(payload).pipe(
       tap({
         next: result => {
           const state = ctx.getState();
-          const order = result.data.find(order => order.order_number == id);
-          ctx.patchState({
-            ...state,
-            selectedOrder: order
-          });
+          const order = result.data.map(x => { x.consumer = current_user_info; return x }).find(order => order.id == id);
+
+          if (order)
+            ctx.patchState({
+              ...state,
+              selectedOrder: order
+            });
+          // else
+          //   this.router.navigateByUrl(`/404`);
         },
         error: err => {
           throw new Error(err?.error?.message);
+        },
+        complete: () => {
+          this.orderService.skeletonLoader = false;
         }
       })
     );
   }
 
+
   @Action(Checkout)
   checkout(ctx: StateContext<OrderStateModel>, action: Checkout) {
 
     const state = ctx.getState();
-
-    // It Just Static Values as per cart default value (When you are using api then you need calculate as per your requirement)
-    const order = {
-      total : {
-        convert_point_amount: -10,
-        convert_wallet_balance: -84.4,
-        coupon_total_discount: 10,
-        points: 300,
-        points_amount: 10,
-        shipping_total: 0,
-        sub_total: 35.19,
-        tax_total: 2.54,
-        total: 37.73,
-        wallet_balance: 84.4,
+    // Calculate using cart information
+    this.cartItem$.subscribe(cartItem => {
+      const sub_total_value = cartItem.reduce((accumulator, object) => {
+        return accumulator + (object.product.sale_price * object.quantity);
+      }, 0);
+      const order = {
+        total: {
+          convert_point_amount: -10,
+          convert_wallet_balance: -84.4,
+          coupon_total_discount: 10,
+          points: 300,
+          points_amount: 10,
+          shipping_total: 0,
+          sub_total: sub_total_value,
+          tax_total: sub_total_value * 8 / 100,
+          total: sub_total_value + (sub_total_value * 8 / 100),
+          wallet_balance: 84.4,
+        }
       }
-    }
 
-    ctx.patchState({
-      ...state,
-      checkout: order
+      ctx.patchState({
+        ...state,
+        checkout: order
+      });
     });
   }
 
   @Action(PlaceOrder)
   placeOrder(ctx: StateContext<OrderStateModel>, action: PlaceOrder) {
-    this.router.navigateByUrl(`/order/details/1000`);
+    const payload = action?.payload;
+    this.user$.subscribe(x => {
+      payload.consumer_id = x.id;
+    });
+    if (action?.payload.payment_method == 'VNPAY')
+      return this.orderService.createPaymentUrl(payload).pipe(
+        tap({
+          next: result => {
+            // ctx.patchState({
+            //   order: {
+            //     data: result.data,
+            //     total: result?.total ? result?.total : result.data?.length
+            //   }
+            // });
+            if (result) {
+              this.store.dispatch(new ClearCart());
+              this.router.navigateByUrl(`/order/details/${result.orderId}`);
+              (window as any).open(result.vnpUrl, "_blank");
+            }
+            else
+              this.router.navigateByUrl(`/order/`);
+
+          },
+          error: err => {
+            throw new Error(err?.error?.message);
+          }
+        })
+      );
+    else
+      return this.orderService.createOrder(payload).pipe(
+        tap({
+          next: result => {
+            // ctx.patchState({
+            //   order: {
+            //     data: result.data,
+            //     total: result?.total ? result?.total : result.data?.length
+            //   }
+            // });
+            if (result) {
+              this.store.dispatch(new ClearCart());
+              this.router.navigateByUrl(`/order/details/${result.orderId}`);
+              // (window as any).open(result.vnpUrl, "_blank");
+            }
+            else
+              this.router.navigateByUrl(`/order`);
+
+          },
+          error: err => {
+            throw new Error(err?.error?.message);
+          }
+        })
+      );
+    //this.router.navigateByUrl(`/order/details/1000`);
   }
 
   @Action(UpdateOrderStatus)

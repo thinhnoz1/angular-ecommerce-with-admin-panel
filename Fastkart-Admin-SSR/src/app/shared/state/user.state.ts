@@ -1,12 +1,15 @@
 import { Injectable } from "@angular/core";
 import { Store, Action, Selector, State, StateContext } from "@ngxs/store";
 import { tap } from "rxjs";
-import { GetUsers, CreateUser, EditUser, UpdateUser, 
-          UpdateUserStatus, DeleteUser, DeleteAllUser, 
-          CreateUserAddress, ImportUser, ExportUser } from "../action/user.action";
+import {
+  GetUsers, CreateUser, EditUser, UpdateUser,
+  UpdateUserStatus, DeleteUser, DeleteAllUser,
+  CreateUserAddress, ImportUser, ExportUser
+} from "../action/user.action";
 import { User } from "../interface/user.interface";
 import { UserService } from "../services/user.service";
 import { NotificationService } from "../services/notification.service";
+import { ActivatedRoute, Router } from "@angular/router";
 
 export class UserStateModel {
   user = {
@@ -28,11 +31,19 @@ export class UserStateModel {
 })
 @Injectable()
 export class UserState {
-  
-  constructor(private store: Store,
-    private notificationService: NotificationService,
-    private userService: UserService) {}
 
+  constructor(private store: Store,
+    private route: ActivatedRoute,
+    private notificationService: NotificationService,
+    private router: Router,
+    private userService: UserService) { }
+
+  reloadCurrentPage() {
+    let currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl]);
+    });
+  }
   @Selector()
   static user(state: UserStateModel) {
     return state.user;
@@ -62,7 +73,7 @@ export class UserState {
             }
           });
         },
-        error: err => { 
+        error: err => {
           throw new Error(err?.error?.message);
         }
       })
@@ -71,7 +82,18 @@ export class UserState {
 
   @Action(CreateUser)
   create(ctx: StateContext<UserStateModel>, action: CreateUser) {
-    // User Create Logic Here
+    return this.userService.addUser(action?.payload).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
+
   }
 
   @Action(EditUser)
@@ -86,22 +108,68 @@ export class UserState {
 
   @Action(UpdateUser)
   update(ctx: StateContext<UserStateModel>, { payload, id }: UpdateUser) {
-    // User Update Logic Here
+    const body = { ...payload, id }
+    return this.userService.updateUser(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(UpdateUserStatus)
   updateStatus(ctx: StateContext<UserStateModel>, { id, status }: UpdateUserStatus) {
-    // User Update Status Logic Here
+    const body = { status, id }
+    return this.userService.updateUser(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(DeleteUser)
   delete(ctx: StateContext<UserStateModel>, { id }: DeleteUser) {
-    // User Delete Logic Here
+    const body = { id }
+    return this.userService.deleteUser(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+          this.reloadCurrentPage();
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(DeleteAllUser)
   deleteAll(ctx: StateContext<UserStateModel>, { ids }: DeleteAllUser) {
-    // User Delete All Logic Here
+    const body = { ids }
+    return this.userService.deleteUser(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+          this.reloadCurrentPage();
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(ImportUser)

@@ -4,17 +4,15 @@ const db = require("../database/db");
 const userController = require("../controllers/userController");
 
 // Get all users
-router.get("/", (req, res) => {
-  db.query("SELECT * FROM users", (err, results) => {
-    if (err) console.log(err);
-    else res.json(results);
-  });
-});
+router.get("/", userController.get_all);
 
 // Get all users
 router.get("/get-user", userController.get_user_info);
 
 
 router.put("/:userId", userController.update_user);
+router.post("/add", userController.add_user);
+router.post("/update", userController.update_user);
+router.post("/delete", userController.delete_user);
 
 module.exports = router;

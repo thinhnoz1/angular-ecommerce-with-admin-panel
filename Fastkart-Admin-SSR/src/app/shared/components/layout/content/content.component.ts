@@ -16,7 +16,7 @@ export class ContentComponent {
     public navServices: NavService) {
     this.store.dispatch(new GetBadges());
     this.store.dispatch(new GetNotification());
-    this.store.dispatch(new GetUserDetails()).subscribe({
+    this.store.dispatch(new GetUserDetails(this.store.selectSnapshot(state => state.auth.id))).subscribe({
       complete: () => {
         this.navServices.sidebarLoading = false;
       }

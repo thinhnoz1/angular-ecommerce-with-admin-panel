@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
 router.get("/get-by-userid", addressController.get_single_address_by_userId);
 router.get("/:id", addressController.get_address_by_id);
 router.post("/create", addressController.create_address);
-router.put("/update/:id", addressController.update_address);
-router.delete("/delete/:id", addressController.delete_address);
+router.post("/update", addressController.update_address);
+router.post("/delete", addressController.delete_address);
 
 module.exports = router;

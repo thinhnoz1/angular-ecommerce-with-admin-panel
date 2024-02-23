@@ -40,7 +40,7 @@ export class AddressModalComponent {
       country_id: new FormControl('', [Validators.required]),
       city: new FormControl('', [Validators.required]),
       pincode: new FormControl('', [Validators.required]),
-      country_code: new FormControl('91', [Validators.required]),
+      country_code: new FormControl('84', [Validators.required]),
       phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)])
     })
   }
@@ -101,7 +101,7 @@ export class AddressModalComponent {
     } else {
       this.address = null;
       this.form.reset();
-      this.form?.controls?.['country_code'].setValue('91');
+      this.form?.controls?.['country_code'].setValue('84');
     }
   }
 
@@ -120,7 +120,7 @@ export class AddressModalComponent {
         complete: () => {
           this.form.reset();
           if(!this.address){
-            this.form?.controls?.['country_code'].setValue('91');
+            this.form?.controls?.['country_code'].setValue('84');
           }
         }
       });

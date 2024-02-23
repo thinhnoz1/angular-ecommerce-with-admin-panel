@@ -53,7 +53,7 @@ exports.getAddressById = (id) => {
         }
         results = results.map(i => {
           i.country = countryHelper.getCountryById(i.country_id), i.state = stateHelper.getById(i.state_id)
-  
+
           return i;
         });
         resolve({
@@ -66,74 +66,102 @@ exports.getAddressById = (id) => {
 }
 
 exports.createAddress = (addressData) => {
+  const { city, country_code, country_id, phone, pincode, state_id, street, title, userId } = addressData
   return new Promise((resolve, reject) => {
-    const sqlQuery = `INSERT INTO addresses SET line1 = ?,
-        line2 = ?,
+    const sqlQuery = `INSERT INTO addresses SET
         city = ?,
-        street_name = ?,
-        country = ?,
+        country_code = ?,
+        country_id = ?,
         phone = ?,
         pincode = ?,
-        user_id = ?,
-        title = ?,
+        state_id = ?,
         street = ?,
-        country_id = ?,
-        is_default = ?,
-        type = ?,
-        state_id = ?`;
+        title = ?,
+        user_id = ?
+        `;
     db.query(sqlQuery,
-      [addressData.line1,
-      addressData.line2,
-      addressData.city,
-      addressData.street_name,
-      addressData.country,
-      addressData.phone,
-      addressData.pincode,
-      addressData.user_id,
-      addressData.title,
-      addressData.street,
-      addressData.country_id,
-      addressData.is_default,
-      addressData.type,
-      addressData.state_id,
-      ],
+      [city, country_code, country_id, phone, pincode, state_id, street, title, userId],
       (err, result) => {
         if (err) {
           console.log(err);
-          reject({ error: "Internal Server Error", msg: err.sqlMessage });
+          reject({
+            message: "Something went wrong, please try again",
+            statusCode: 400,
+            data: err,
+          });
         } else {
-          resolve({ data: result });
+          resolve({
+            data: result,
+            message: "Success!",
+            statusCode: 200,
+          });
         }
       });
   });
 }
 
-exports.updateAddress = (id, addressData) => {
+exports.updateAddress = (addressData) => {
+  const { city, country_code, country_id, phone, pincode, state_id, street, title, id } = addressData
+
   return new Promise((resolve, reject) => {
-    const sqlQuery = `UPDATE addresses SET line1 = ?, line2 = ?, city = ?, street_name = ?, country = ?, phone = ?, pincode = ?, user_id = ?, title = ?, street = ?, country_id = ?, is_default = ?, type = ?, state_id = ? WHERE id = ?`;
+    const sqlQuery = `UPDATE addresses SET city = ?,
+    country_code = ?,
+    country_id = ?,
+    phone = ?,
+    pincode = ?,
+    state_id = ?,
+    street = ?,
+    title = ? WHERE id = ?`;
 
     db.query(sqlQuery,
-      [addressData.line1, addressData.line2, addressData.city, addressData.street_name, addressData.country, addressData.phone, addressData.pincode, addressData.user_id, addressData.title, addressData.street, addressData.country_id, addressData.is_default, addressData.type, addressData.state_id, id],
+      [city, country_code, country_id, phone, pincode, state_id, street, title, id],
       (err, result) => {
         if (err) {
           console.log(err);
-          reject({ message: err, statusCode: 500 });
+          reject({
+            message: "Something went wrong, please try again",
+            statusCode: 400,
+            data: err,
+          });
         } else {
-          resolve({ message: "Address updated successfully", data: result, statusCode: 200 });
+          resolve({
+            data: result,
+            message: "Success!",
+            statusCode: 200,
+          });
         }
       });
   });
 }
 
-exports.deleteAddress = (id) => {
+exports.deleteAddress = (params) => {
+  const { id, ids } = params;
   return new Promise((resolve, reject) => {
-    db.query(`DELETE FROM addresses WHERE id = ?`, [id], (err, result) => {
-      if (err) {
-        console.log(err);
-        reject({ error: err });
-      } else {
-        resolve({ data: result });
-      }
-    });
+    let query = ``;
+    let conditionalQuery = [];
+
+    if (id) conditionalQuery.push(id);
+    if (ids) conditionalQuery.push(...ids);
+
+    query += `${conditionalQuery.join(", ")}`
+
+    db.query(`DELETE FROM addresses WHERE id IN (${query})`,
+      [],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          reject({
+            message: "Something went wrong, please try again",
+            statusCode: 400,
+            data: err,
+          });
+        } else {
+          resolve({
+            data: result,
+            message: "Success!",
+            statusCode: 200,
+          });
+        }
+      });
   });
 }

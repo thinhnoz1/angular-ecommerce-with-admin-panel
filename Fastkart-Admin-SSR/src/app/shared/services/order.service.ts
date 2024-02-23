@@ -19,11 +19,11 @@ export class OrderService {
   }
 
   getOrders(payload?: Params): Observable<OrderModel> {
-    return this.http.get<OrderModel>(`${environment.apiURL}/orders/get-all`, { params: payload });
+    return this.http.get<OrderModel>(`${environment.apiURL}/orders/get-all-admin`, { params: payload });
   }
 
   getOrderById(payload?: Params): Observable<OrderModel> {
-    return this.http.get<OrderModel>(`${environment.apiURL}/orders/single`, { params: payload });
+    return this.http.get<OrderModel>(`${environment.apiURL}/orders/single-admin`, { params: payload });
   }
 
   createPaymentUrl(payload?: Params): Observable<any> {

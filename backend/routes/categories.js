@@ -140,8 +140,8 @@ router.get('/get-one/:id', categoryController.get_category_by_id);
 
 router.post('/create', categoryController.create_category);
 
-router.put('/update/:id', categoryController.update_category);
+router.post('/update', categoryController.update_category);
 
-router.get('/delete/:id', categoryController.delete_category);
+router.post('/delete', categoryController.delete_category);
 
 module.exports = router;

@@ -69,35 +69,37 @@ exports.get_product_by_id = async (req, res, next) => {
 };
 
 exports.create_product = async (req, res, next) => {
-  const product = req.body;
-  productService.createProduct(product)
+  productService.createProduct(req.body)
       .then(result => {
-          res.status(result.statusCode).json(result);
+        const { message, data } = result;
+        res.status(200).send({ message, data });
       })
       .catch(error => {
-          res.status(500).json(error);
+        const { statusCode = 400, message } = error;
+        res.status(statusCode).send({ message }) && next(err);
       });
 }
 
 exports.update_product = async (req, res, next) => {
-  const { id } = req.params;
-  const product = req.body;
-  productService.updateProduct(id, product)
+  productService.updateProduct(req.body)
       .then(result => {
-          res.status(result.statusCode).json(result);
+        const { message, data } = result;
+        res.status(200).send({ message, data });
       })
       .catch(error => {
-          res.status(500).json(error);
+        const { statusCode = 400, message } = err;
+        res.status(statusCode).send({ message }) && next(err);
       });
 }
 
 exports.delete_product = async (req, res, next) => {
-  const { id } = req.params;
-  productService.deleteProduct(id)
+  productService.deleteProduct(req.body)
       .then(result => {
-          res.status(result.statusCode).json(result);
+        const { message, data } = result;
+        res.status(200).send({ message, data });
       })
       .catch(error => {
-          res.status(500).json(error);
+        const { statusCode = 400, message } = err;
+        res.status(statusCode).send({ message }) && next(err);
       });
 }

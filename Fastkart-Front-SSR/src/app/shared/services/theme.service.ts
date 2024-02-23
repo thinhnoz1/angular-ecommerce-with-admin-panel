@@ -31,15 +31,27 @@ export class ThemeService {
       map(obj => {
         obj.content.main_content.sidebar.categories_icon_list.category_ids = obj.category_ids.data.filter(i => !i.parent_id).map(i => i.id);
         obj.content.main_content.sidebar.sidebar_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
-        obj.content.main_content.section2_categories_list.category_ids = obj.category_ids.data.map(i => i.id);
-        obj.content.main_content.section1_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
+
+        // Product section 1
+        obj.content.main_content.section1_products.product_ids = obj.product_ids.data.filter(i => i.is_sale_enable).map(i => i.id);
+
+        // Product section 2
+        obj.content.main_content.section2_categories_list.product_ids = [54,55,56]
+        obj.content.main_content.section2_categories_list.category_ids = obj.category_ids.data.filter(x => x.parent_id == 4).map(i => i.id);
+
+        // Product section 2_2
+        obj.content.main_content.section2_categories_list_2.product_ids = [57,58]
+        obj.content.main_content.section2_categories_list_2.category_ids = obj.category_ids.data.filter(x => x.parent_id == 5).map(i => i.id);
+
+        // debugger
+
         obj.content.main_content.section4_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
         obj.content.main_content.section7_products.product_ids = obj.product_ids.data.filter(i => i.is_trending).map(i => i.id);
 
         return obj
       })
     )
-    itemWithFavoriteProperty$.subscribe(console.log);
+    // itemWithFavoriteProperty$.subscribe(console.log);
     return itemWithFavoriteProperty$
   }
 

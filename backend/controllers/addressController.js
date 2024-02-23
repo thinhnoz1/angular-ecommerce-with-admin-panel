@@ -63,37 +63,37 @@ exports.get_address_by_id = async (req, res) => {
 }
 
 exports.create_address = async (req, res) => {
-  const addressData = req.body;
-  addressService.createAddress(addressData )
+  addressService.createAddress(req.body)
     .then(result => {
-        res.status(result.statusCode).json(result);
+      const { statusCode = 200, message, data } = result;
+      res.status(statusCode).send({ message, data });
     })
     .catch(err => {
-       res.status(500).json(err);
-
+      const { statusCode = 400, message, data } = err;
+      res.status(statusCode).send({ message, data }) && next(err);
     });
 }
 
 exports.update_address = async (req, res) => {
-  const {id} = req.params;
-  const addressData = req.body;
-
-  addressService.updateAddress(id, addressData)
+  addressService.updateAddress(req.body)
       .then(result => {
-          res.status(result.statusCode).json(result);
+        const { statusCode = 200, message, data } = result;
+        res.status(statusCode).send({ message, data });
       })
       .catch(error => {
-          res.status(error.statusCode || 500).json(error);
+        const { statusCode = 400, message, data } = err;
+        res.status(statusCode).send({ message, data }) && next(err);
     });
 }
 
 exports.delete_address = async (req, res) => {
-  const {id} = req.params;
-  addressService.deleteAddress(id)
+  addressService.deleteAddress(req.body)
       .then(result => {
-          res.json({ data: result });
+        const { statusCode = 200, message, data } = result;
+        res.status(statusCode).send({ message, data });
       })
       .catch(error => {
-          res.status(500).json(error);
+        const { statusCode = 400, message, data } = err;
+        res.status(statusCode).send({ message, data }) && next(err);
     });
 }

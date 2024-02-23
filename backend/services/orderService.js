@@ -157,6 +157,98 @@ exports.getSingleOrder = (params) => {
   });
 };
 
+exports.getSingleOrderAdmin = (params) => {
+  const { orderId, userId } = params;
+
+  if (!orderId) throw { message: "orderId was not provided", statusCode: 400 };
+  if (!userId) throw { message: "userId was not provided", statusCode: 400 };
+
+  return new Promise((resolve, reject) => {
+    db.query(`SELECT * FROM orders WHERE orders.id = ?`, [parseInt(orderId)], (err, result) => {
+      if (err) {
+        console.log(err);
+        reject({ error: "Internal Server Error" });
+      } else {
+        // Get list of products to the order detail
+        let query = `select p.*, od.quantity as order_quantity from orders_details od
+        INNER JOIN products p ON ( p.id = od.product_id ) 
+        WHERE od.order_id = ?`
+
+        db.query(query, [parseInt(orderId)], (prod_err, prod_result) => {
+          if (prod_err) {
+            console.log(prod_err);
+            reject({ error: "Internal Server Error" });
+          } else {
+            result = result.map(x => {
+              x.products = prod_result.map(element => {
+                element.quantity = element.order_quantity
+                element.sub_total = element.order_quantity * element.sale_price
+                return element
+              });
+              return x;
+            });
+
+            if (result.length == 0) {
+              reject({ error: "Internal Server Error" });
+              return false;
+            }
+            // Get billing address to the order detail
+            query = `select * from addresses
+            WHERE id = ?`
+
+            db.query(query, [parseInt(result[0].billing_address_id)], (bill_add_err, bill_add_result) => {
+              if (bill_add_err) {
+                console.log(bill_add_err);
+                reject({ error: "Internal Server Error" });
+              } else {
+                result = result.map(x => {
+                  x.billing_address = bill_add_result.length ? bill_add_result.pop() : null;
+                  x.billing_address.country = countryHelper.getCountryById(x.billing_address.country_id);
+                  x.billing_address.state = stateHelper.getById(x.billing_address.state_id);
+                  return x;
+                });
+
+                // Get shipping address to the order detail
+                query = `select * from addresses
+                WHERE id = ?`
+
+                db.query(query, [parseInt(result[0].shipping_address_id)], (ship_add_err, ship_add_result) => {
+                  if (ship_add_err) {
+                    console.log(ship_add_err);
+                    reject({ error: "Internal Server Error" });
+                  } else {
+                    result = result.map(x => {
+                      x.shipping_address = ship_add_result.length ? ship_add_result.pop() : null;
+                      x.shipping_address.country = countryHelper.getCountryById(x.shipping_address.country_id);
+                      x.shipping_address.state = stateHelper.getById(x.shipping_address.state_id);
+                      return x;
+                    });
+
+                    result = result.map(x => {
+                      x.order_status = result[0].order_status_id ? orderStatusHelper.getById(result[0].order_status_id) : null;
+                      return x;
+                    });
+
+                    result = result.map(x => {
+                      x.sub_orders = [];
+                      return x;
+                    });
+
+                    resolve({ data: result, total: result.length });
+                  }
+                });
+                //END: Get shipping address to the order detail
+              }
+            });
+            //END: Get billing address to the order detail
+          }
+        });
+
+      }
+    });
+  });
+};
+
 exports.getOrders = async (params) => {
   const { userId, page, paginate } = params;
   let query = `SELECT * FROM orders WHERE consumer_id = ?`;
@@ -173,6 +265,32 @@ exports.getOrders = async (params) => {
   }
   return new Promise((resolve, reject) => {
     db.query(query, [userId], (err, result) => {
+      if (err) {
+        console.log(err);
+        reject({ error: "Internal Server Error" });
+      } else {
+        resolve({ data: result, total: result.length });
+      }
+    });
+  });
+};
+
+exports.getOrdersAdmin = async (params) => {
+  const { userId, page, paginate } = params;
+  let query = `SELECT * FROM orders`;
+  let offsetValue = 0;
+
+  if (!userId) throw { message: "userId was not provided", statusCode: 400 };
+
+  if (page > 0) {
+    offsetValue = (page - 1) * paginate;
+    query += ` LIMIT ${paginate} OFFSET ${offsetValue}`;
+  }
+  else {
+    if (paginate) query += ` LIMIT ${paginate}`;
+  }
+  return new Promise((resolve, reject) => {
+    db.query(query, [], (err, result) => {
       if (err) {
         console.log(err);
         reject({ error: "Internal Server Error" });

@@ -63,6 +63,8 @@ export interface MainContent {
   sidebar : Sidebar;
   section1_products: ProductSection;
   section2_categories_list: CategoriesSection;
+  section2_categories_list_2: CategoriesSection;
+  section2_categories_list_3: CategoriesSection;
   section3_two_column_banners: TwoBanners;
   section4_products: ProductSection;
   section5_coupons: FullWidthBanner;
@@ -110,6 +112,7 @@ export interface CategoriesSection {
   description: string;
   image_url: string;
   category_ids: number[];
+  product_ids?: number[];
   status: boolean;
 }
 

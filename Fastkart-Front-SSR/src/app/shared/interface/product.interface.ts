@@ -59,7 +59,7 @@ export interface Product {
     product_meta_image_id: number;
     tags: Tag[];
     tag: Tag;
-    categories: Category[];
+    categories?: Category[];
     category: Category;
     store?: Stores;
     store_name?: string;

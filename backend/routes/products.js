@@ -5,7 +5,7 @@ const productController = require("../controllers/productController");
 
 // GET ALL PRODUCTS
 router.get("/", async (req, res) => {
-  const { search = "", field = "", sort = "", page , paginate, isConditional, isTrending } = req.query;
+  const { search = "", field = "", sort = "", page, paginate, isConditional, isTrending } = req.query;
 
   let offsetValue;
   // This query won't work in MariaDB if you are using XAMPP default setting (which MariaDB is auto-configured instead of MySQL)
@@ -32,22 +32,117 @@ router.get("/", async (req, res) => {
     left join product_category pc on p.id = pc.product_id
     left join categories c on pc.category_id = c.id
   `;
-  
-  if (isConditional){
+
+  if (isConditional) {
     let conditionalQuery = [];
     if (isTrending) conditionalQuery.push(`p.is_trending = ${isTrending}`);
     if (search) conditionalQuery.push(`p.name LIKE '%${search}%'`);
 
-    query+=` where ${conditionalQuery.join(" AND ")}`
+    query += ` where ${conditionalQuery.join(" AND ")}`
   }
-  query+=` GROUP BY p.id`
+  query += ` GROUP BY p.id`
 
   if (page > 0) {
-    offsetValue = (page - 1)*paginate;
-    query+=` LIMIT ${paginate} OFFSET ${offsetValue}`;
-  } 
-  else{
-    if (paginate) query+=` LIMIT ${paginate}`;
+    offsetValue = (page - 1) * paginate;
+    query += ` LIMIT ${paginate} OFFSET ${offsetValue}`;
+  }
+  else {
+    if (paginate) query += ` LIMIT ${paginate}`;
+  }
+  // console.log(query);
+  // var fs=require('fs');
+  // var data=fs.readFileSync('./product.json', 'utf8');
+  // var words=JSON.parse(data);
+  // res.json(words)
+  db.query(
+    query,
+    async (err, results) => {
+      if (err) console.log(err);
+      else {
+        let resData = [];
+        if (results.length) {
+          await results.reduce(async (accumulatorPromise, item) => {
+            const accumulator = await accumulatorPromise;
+
+            const imgs = await new Promise((resolve, reject) => {
+              db.query(`SELECT * FROM images WHERE id = ?`, [item.product_thumbnail_id], (err, result) => {
+                if (err) {
+                  console.log(err);
+                  reject({ error: "Internal Server Error" });
+                } else {
+                  resolve(result.pop())
+                }
+              });
+            }); 
+            
+            item.product_thumbnail = imgs;
+            return [...accumulator, resData.push(item)];
+            // Add the processed result to the accumulator (accumulator array in this case)
+
+          }, Promise.resolve([]));
+
+
+          if (resData.length)
+            res.json({
+              data: resData.map(obj => {
+                return { ...obj, categories: JSON.parse(obj.categories) };
+              }),
+              total: resData ? resData.length : 0
+            });
+          else
+            res.status(500).send({ message: 'Some error occur!' });
+        }
+
+      }
+    }
+  );
+});
+
+// GET ALL PRODUCTS
+router.get("/get-v2", async (req, res) => {
+  const { search = "", field = "", sort = "", page, paginate, isConditional, isTrending } = req.query;
+
+  let offsetValue;
+  // This query won't work in MariaDB if you are using XAMPP default setting (which MariaDB is auto-configured instead of MySQL)
+  let query = `
+  SELECT p.*,
+    ( CASE
+        WHEN pc.product_id IS NULL THEN NULL
+        ELSE 
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'id', c.id, 
+            'name', c.name, 
+            'slug', c.slug, 
+            'description', c.description, 
+            'status', c.status, 
+            'parent_id', c.parent_id, 
+            'type', c.type, 
+            'category_image_id', c.category_image_id, 
+            'category_icon_id', c.category_icon_id
+          )
+        )
+      END ) 'categories'
+    from products p
+    left join product_category pc on p.id = pc.product_id
+    left join categories c on pc.category_id = c.id
+  `;
+
+  if (isConditional) {
+    let conditionalQuery = [];
+    if (isTrending) conditionalQuery.push(`p.is_trending = ${isTrending}`);
+    if (search) conditionalQuery.push(`p.name LIKE '%${search}%'`);
+
+    query += ` where ${conditionalQuery.join(" AND ")}`
+  }
+  query += ` GROUP BY p.id`
+
+  if (page > 0) {
+    offsetValue = (page - 1) * paginate;
+    query += ` LIMIT ${paginate} OFFSET ${offsetValue}`;
+  }
+  else {
+    if (paginate) query += ` LIMIT ${paginate}`;
   }
   // console.log(query);
   // var fs=require('fs');
@@ -58,14 +153,14 @@ router.get("/", async (req, res) => {
     query,
     (err, results) => {
       if (err) console.log(err);
-      else{
+      else {
         res.json({
           data: results.map(obj => {
             return { ...obj, categories: JSON.parse(obj.categories) };
-        }),
+          }),
           total: results ? results.length : 0
         });
-      } 
+      }
     }
   );
 });
@@ -104,7 +199,7 @@ router.get("/get-one", async (req, res) => {
         res.json({
           data: results.length > 0 ? results.map(obj => {
             return { ...obj, categories: JSON.parse(obj.categories) };
-        }).pop() : null,
+          }).pop() : null,
           total: results ? results.length : 0
         });
       }
@@ -184,14 +279,15 @@ router.get("/get-one-by-slug", async (req, res) => {
       else {
         res.json({
           data: results.length > 0 ? results.map(obj => {
-            return { ...obj, 
-              categories: JSON.parse(obj.categories), 
+            return {
+              ...obj,
+              categories: JSON.parse(obj.categories),
               related_products: JSON.parse(obj.related_products),
               cross_sell_products: JSON.parse(obj.cross_sell_products),
               product_thumbnail: JSON.parse(obj.product_thumbnail),
-              product_galleries: JSON.parse(obj.product_galleries),            
-             };
-        }) : null,
+              product_galleries: JSON.parse(obj.product_galleries),
+            };
+          }) : null,
           total: results ? results.length : 0
         });
       }
@@ -200,8 +296,8 @@ router.get("/get-one-by-slug", async (req, res) => {
 });
 
 router.get("/get-all", productController.get_all_products);
-router.get("/get-one/:id", productController.get_product_by_id);
+// router.get("/get-one/:id", productController.get_product_by_id);
 router.post("/create", productController.create_product);
-router.put("/update/:id", productController.update_product);
-router.get("/delete/:id", productController.delete_product);
+router.post("/update", productController.update_product);
+router.post("/delete", productController.delete_product);
 module.exports = router;

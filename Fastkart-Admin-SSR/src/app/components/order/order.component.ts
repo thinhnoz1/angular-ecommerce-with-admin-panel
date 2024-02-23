@@ -66,7 +66,7 @@ export class OrderComponent {
   }
 
   view(data: Order) {
-    this.router.navigateByUrl(`/order/details/${data.order_number}`);
+    this.router.navigateByUrl(`/order/details/${data.id}`);
   }
 
 }

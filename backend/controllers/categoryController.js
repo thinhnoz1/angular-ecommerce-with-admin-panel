@@ -78,9 +78,8 @@ exports.create_category = (req, res) => {
 }
 
 exports.update_category = (req, res) => {
-    const {id} = req.params;
     const category = req.body;
-    categoryService.updateCategory(id, category)
+    categoryService.updateCategory(category)
         .then(result => {
             res.status(result.statusCode).json(result);
         })
@@ -90,10 +89,9 @@ exports.update_category = (req, res) => {
 }
 
 exports.delete_category = (req, res) => {
-    const {id} = req.params;
-    categoryService.deleteCategory(id)
+    categoryService.deleteCategory(req.body)
         .then(result => {
-            res.status(result.statusCode).json(result);
+            res.send({result, message: "Success!"});
         })
         .catch(err => {
             res.status(500).json(err);

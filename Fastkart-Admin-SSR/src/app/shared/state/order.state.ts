@@ -123,7 +123,7 @@ export class OrderState {
       tap({
         next: result => {
           const state = ctx.getState();
-          const order = result.data.map(x => { x.consumer = current_user_info; return x }).find(order => order.id == id);
+          const order = result.data.find(order => order.id == id);
 
           if (order)
             ctx.patchState({

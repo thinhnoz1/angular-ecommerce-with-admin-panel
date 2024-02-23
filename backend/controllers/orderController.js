@@ -2,6 +2,7 @@ const {
   getOrders,
   getSingleOrder,
   createOrder, getAllOrders,
+  getSingleOrderAdmin
 } = require("../services/orderService");
 const orderService = require("../services/orderService");
 const { PaymentStatus } = require("../static_data/payment_status");
@@ -22,9 +23,33 @@ exports.get_single_order = (req, res, next) => {
     });
 };
 
+exports.get_single_order_admin = (req, res, next) => {
+  const { orderId, userId } = req.query;
+  getSingleOrderAdmin({ orderId, userId })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      const { statusCode = 400, message } = err;
+      res.status(statusCode).send({ message }) && next(err);
+    });
+};
+
 exports.get_orders = async (req, res, next) => {
   const { userId, page , paginate } = req.query;
   getOrders({ userId, page , paginate })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      const { statusCode = 400, message } = err;
+      res.status(statusCode).send({ message }) && next(err);
+    });
+};
+
+exports.get_orders_admin = async (req, res, next) => {
+  const { userId, page , paginate } = req.query;
+  orderService.getOrdersAdmin({ userId, page , paginate })
     .then((result) => {
       res.status(200).json(result);
     })

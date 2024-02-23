@@ -28,7 +28,13 @@ export class CategoryStateModel {
 })
 @Injectable()
 export class CategoryState {
-  
+  reloadCurrentPage() {
+    let currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl]);
+    });
+  }
+
   constructor(private store: Store, private router: Router,
     private notificationService: NotificationService,
     private categoryService: CategoryService) {}
@@ -76,7 +82,18 @@ export class CategoryState {
 
   @Action(CreateCategory)
   create(ctx: StateContext<CategoryStateModel>, action: CreateCategory) {
-    // Category Create Logic Here
+    return this.categoryService.addCategory(action?.payload).pipe(
+      tap({
+        next: result => {
+          this.reloadCurrentPage();
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(EditCategory)
@@ -91,12 +108,36 @@ export class CategoryState {
 
   @Action(UpdateCategory)
   update(ctx: StateContext<CategoryStateModel>, { payload, id }: UpdateCategory) {
-    // Category Update Logic Here
+    const body = { ...payload, id }
+    return this.categoryService.updateCategory(body).pipe(
+      tap({
+        next: result => {
+          this.reloadCurrentPage();
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(DeleteCategory)
   delete(ctx: StateContext<CategoryStateModel>, { id, type }: DeleteCategory) {
-    // Category Delete Logic Here
+    const body = { id, type }
+    return this.categoryService.deleteCategory(body).pipe(
+      tap({
+        next: result => {
+          this.reloadCurrentPage();
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
 }

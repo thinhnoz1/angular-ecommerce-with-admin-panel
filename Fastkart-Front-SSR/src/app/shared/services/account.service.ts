@@ -17,4 +17,18 @@ export class AccountService {
     return this.http.get<any>(`${environment.apiURL}/users/get-user`, {params: payload});
   }
 
+  addAddress(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/addresses/create`, payload);
+  }
+  
+  updateAddress(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/addresses/update`, payload);
+  }
+  deleteAddress(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/addresses/delete`, payload);
+  }
+
 }

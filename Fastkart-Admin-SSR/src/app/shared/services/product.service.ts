@@ -28,4 +28,19 @@ export class ProductService {
     // return this.http.get<ProductModel>(`${environment.URL}/product.json`, { params: payload });
     return this.http.get<ProductModel>(`${environment.apiURL}/products/get-one-by-slug`, { params: payload });
   }
+  
+  deleteProduct(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/products/delete`, payload);
+  }
+  
+  updateProduct(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/products/update`, payload);
+  }
+
+  addProduct(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/products/create`, payload);
+  }
 }

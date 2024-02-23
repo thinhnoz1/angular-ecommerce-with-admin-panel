@@ -93,7 +93,33 @@
               <div class="section-b-space">
                 <app-theme-product
                   [sliderOption] = "productSlider"
-                  [productIds]="data?.content?.main_content?.section4_products?.product_ids || []"
+                  [productIds]="data?.content?.main_content?.section2_categories_list?.product_ids || []"
+                  [slider]="true"
+                  [style]="'horizontal'">
+                </app-theme-product>
+              </div>
+            </div>
+          </ng-container>
+          <!-- Categories Section End-->
+
+          <!-- Categories Section Start-->
+          <ng-container *ngIf="data?.content?.main_content?.section2_categories_list_2?.status">
+            <div class="category-product-section">
+              <app-title
+                [title]="data?.content?.main_content?.section2_categories_list_2?.title"
+                [description]="data?.content?.main_content?.section2_categories_list_2?.description">
+              </app-title>
+              <app-theme-categories
+                [sliderOption]="categorySlider"
+                [image]="data?.content?.main_content?.section2_categories_list_2?.image_url!"
+                [categoryIds]="data?.content?.main_content?.section2_categories_list_2?.category_ids || []"
+                [theme]="'paris'"
+                [style]="'horizontal'">
+              </app-theme-categories>
+              <div class="section-b-space">
+                <app-theme-product
+                  [sliderOption] = "productSlider"
+                  [productIds]="data?.content?.main_content?.section2_categories_list_2?.product_ids || []"
                   [slider]="true"
                   [style]="'horizontal'">
                 </app-theme-product>

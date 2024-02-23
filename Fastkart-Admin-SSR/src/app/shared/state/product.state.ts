@@ -34,6 +34,12 @@ export class ProductStateModel {
 })
 @Injectable()
 export class ProductState {
+  reloadCurrentPage() {
+    let currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl]);
+    });
+  }
 
   constructor(private store: Store,
     private router: Router,
@@ -119,7 +125,17 @@ export class ProductState {
 
   @Action(CreateProduct)
   create(ctx: StateContext<ProductStateModel>, action: CreateProduct) {
-    // Product Create Logic Here
+    return this.productService.addProduct(action?.payload).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(EditProduct)
@@ -134,12 +150,34 @@ export class ProductState {
 
   @Action(UpdateProduct)
   update(ctx: StateContext<ProductStateModel>, { payload, id }: UpdateProduct) {
-    // Product Update Logic Here
+    const body = { ...payload, id }
+    return this.productService.updateProduct(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(UpdateProductStatus)
   updateStatus(ctx: StateContext<ProductStateModel>, { id, status }: UpdateProductStatus) {
-    // Product Update Status Logic Here
+    const body = { status, id }
+    return this.productService.updateProduct(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(ApproveProductStatus)
@@ -149,12 +187,36 @@ export class ProductState {
 
   @Action(DeleteProduct)
   delete(ctx: StateContext<ProductStateModel>, { id }: DeleteProduct) {
-    // Product Delete Logic Here
+    const body = { id }
+    return this.productService.deleteProduct(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+          this.reloadCurrentPage();
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(DeleteAllProduct)
   deleteAll(ctx: StateContext<ProductStateModel>, { ids }: DeleteAllProduct) {
-    // Product Delete All Logic Here
+    const body = { ids }
+    return this.productService.deleteProduct(body).pipe(
+      tap({
+        next: result => {
+          this.notificationService.showSuccess(result?.message);
+          this.reloadCurrentPage();
+        },
+        error: err => {
+          this.notificationService.showError('Something went wrong, please try again later!');
+          throw new Error(err?.error?.message);
+        }
+      })
+    );
   }
 
   @Action(ReplicateProduct)

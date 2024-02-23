@@ -141,6 +141,14 @@
         "product_ids": [],
         "status": true
       },
+      "section2_categories_list_2": {
+        "image_url": null,
+        "title": "Old Laptop",
+        "description": "Used price but still good as new!",
+        "category_ids": [],
+        "product_ids": [],
+        "status": true
+      },
       "section3_two_column_banners": {
         "status": true,
         "banner_1": {
@@ -159,8 +167,8 @@
         }
       },
       "section4_products": {
-        "title": "Old Laptop",
-        "description": "Used price but still good as new",
+        "title": "All Laptop",
+        "description": "All of our Laptop",
         "status": true,
         "product_ids": [
           54,

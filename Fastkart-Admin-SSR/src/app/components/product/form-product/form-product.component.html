@@ -311,14 +311,14 @@
                         <a ngbNavLink><i class="ri-tools-line"></i>{{ 'setup' | translate }}</a>
                         <ng-template ngbNavContent>
                             <div class="tab" tab="setup">
-                                <app-form-fields [labelClass]="'form-label-title col-sm-3 mb-0'" [gridClass]="'col-sm-9'" [label]="'tags'" [for]="'tags'" [required]="false">
+                                <!-- <app-form-fields [labelClass]="'form-label-title col-sm-3 mb-0'" [gridClass]="'col-sm-9'" [label]="'tags'" [for]="'tags'" [required]="false">
                                     <app-advanced-dropdown 
                                         [position]="'bottom'" 
                                         [selectedOption]="selectedTags"
                                         [options]="(tag$ | async )?.data?.length ? (tag$ | async )?.data : []"
                                         (selectedItem)="selectTagItem($event)">
                                     </app-advanced-dropdown>
-                                </app-form-fields>
+                                </app-form-fields> -->
                                 <app-form-fields [labelClass]="'form-label-title col-sm-3 mb-0'" [gridClass]="'col-sm-9'" [label]="'categories'" [for]="'categories'" [required]="true">
                                     <app-advanced-dropdown 
                                         [position]="'bottom'" [selectedOption]="selectedCategories"
@@ -361,10 +361,11 @@
                                     <p class="help-text">{{ '*Choose a maximum of 6 products for effective related products display.' }}</p>
                                 </app-form-fields>
                                 <app-form-fields [labelClass]="'form-label-title col-sm-3 mb-0'" [gridClass]="'col-sm-9'" [label]="'cross_sell_products'" [for]="'cross_sell_products'" [required]="false">
+                                    <!-- [data]="collectionProduct?.length ? collectionProduct : []" -->
                                     <select2 
                                         class="custom-select"
                                         [templates]="template" 
-                                        [data]="collectionProduct?.length ? collectionProduct : []"
+                                        [data]="(products$ | async)?.length ? (products$ | async) : []"
                                         [placeholder]="'select_product' | translate"
                                         formControlName="cross_sell_products"
                                         noResultMessage="{{ 'no_data_found' | translate }}"

@@ -1,17 +1,17 @@
 const db = require("../database/db");
 
 exports.createOrder = async (params) => {
-    const {userId, cart} = params;
+    const { userId, cart } = params;
 
-    if (!cart) throw {message: "cart was not provided", statusCode: 400};
-    if (!userId) throw {message: "userId was not provided", statusCode: 400};
+    if (!cart) throw { message: "cart was not provided", statusCode: 400 };
+    if (!userId) throw { message: "userId was not provided", statusCode: 400 };
 
     return new Promise((resolve, reject) => {
         db.query(
             `INSERT INTO orders (user_id) VALUES (?)`,
             [userId],
             (err, result) => {
-                if (err) reject({message: err, statusCode: 500});
+                if (err) reject({ message: err, statusCode: 500 });
 
                 if (result) {
                     let newOrderId = result.insertId;
@@ -20,7 +20,7 @@ exports.createOrder = async (params) => {
                             `SELECT p.quantity FROM products p WHERE p.id = ?`,
                             [prod.id],
                             (err, result) => {
-                                if (err) reject({message: err, statusCode: 500});
+                                if (err) reject({ message: err, statusCode: 500 });
 
                                 let productQuantity = result[0].quantity; // db product
 
@@ -34,12 +34,12 @@ exports.createOrder = async (params) => {
                                     `INSERT INTO orders_details (order_id, product_id, quantity) VALUES (?,?,?)`,
                                     [newOrderId, prod.id, prod.quantity],
                                     (err, result) => {
-                                        if (err) reject({message: err, statusCode: 500});
+                                        if (err) reject({ message: err, statusCode: 500 });
 
                                         db.query(
                                             `UPDATE products SET quantity = ${productQuantity} WHERE id = ${prod.id}`,
                                             (err, result) => {
-                                                if (err) reject({message: err, statusCode: 500});
+                                                if (err) reject({ message: err, statusCode: 500 });
                                                 console.log(result);
                                             }
                                         );
@@ -67,20 +67,20 @@ exports.createOrder = async (params) => {
 };
 
 exports.getSingleOrder = async (params) => {
-    const {orderId, userId} = params;
+    const { orderId, userId } = params;
 
-    if (!orderId) throw {message: "orderId was not provided", statusCode: 400};
-    if (!userId) throw {message: "userId was not provided", statusCode: 400};
+    if (!orderId) throw { message: "orderId was not provided", statusCode: 400 };
+    if (!userId) throw { message: "userId was not provided", statusCode: 400 };
 
     return new Promise((resolve, reject) => {
         db.query(
             `SELECT * FROM orders INNER JOIN orders_details ON ( orders.id = orders_details.order_id ) WHERE orders.id = ? AND orders.user_id = ?`,
             [orderId, userId],
             (err, result) => {
-                if (err) reject({message: err, statusCode: 500});
+                if (err) reject({ message: err, statusCode: 500 });
 
                 if (result.length === 0)
-                    reject({message: "order was not found", statusCode: 400});
+                    reject({ message: "order was not found", statusCode: 400 });
 
                 resolve({
                     statusCode: 200,
@@ -93,19 +93,19 @@ exports.getSingleOrder = async (params) => {
 };
 
 exports.getOrders = async (params) => {
-    const {userId} = params;
+    const { userId } = params;
 
-    if (!userId) throw {message: "userId was not provided", statusCode: 400};
+    if (!userId) throw { message: "userId was not provided", statusCode: 400 };
 
     return new Promise((resolve, reject) => {
         db.query(
             `SELECT * FROM orders INNER JOIN orders_details ON ( orders.id = orders_details.order_id ) WHERE user_id = ?`,
             [userId],
             (err, result) => {
-                if (err) reject({message: err, statusCode: 500});
+                if (err) reject({ message: err, statusCode: 500 });
 
                 if (result.length === 0)
-                    reject({message: "No order were found", statusCode: 400});
+                    reject({ message: "No order were found", statusCode: 400 });
 
                 resolve({
                     statusCode: 200,
@@ -122,9 +122,9 @@ exports.getAllCategories = () => {
         db.query(`SELECT * FROM categories`, (err, result) => {
             if (err) {
                 console.log(err);
-                reject({error: "Internal Server Error"});
+                reject({ error: "Internal Server Error" });
             } else {
-                resolve({data: result, total: result.length});
+                resolve({ data: result, total: result.length });
             }
         });
     });
@@ -135,7 +135,7 @@ exports.getCategoryById = (id) => {
         db.query(`SELECT * FROM categories WHERE id = ${id}`, (err, result) => {
             if (err) {
                 console.log(err);
-                reject({error: "Internal Server Error"});
+                reject({ error: "Internal Server Error" });
             } else {
                 resolve(result[0]);
             }
@@ -144,30 +144,40 @@ exports.getCategoryById = (id) => {
 };
 
 exports.createCategory = (categoryData) => {
+    const { category_icon_id,
+        category_image_id,
+        commission_rate,
+        description,
+        name,
+        parent_id,
+        status,
+        type } = categoryData;
     return new Promise((resolve, reject) => {
         const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        const sqlQuery = `INSERT INTO categories (title, name, slug, description, status, type, parent_id, category_image_id, category_icon_id, created_by_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sqlQuery = `INSERT INTO categories (category_icon_id,
+            category_image_id,
+            description,
+            name,
+            parent_id,
+            status,
+            type) VALUES (?,?,?,?,?,?,?)`;
 
         db.query(
             sqlQuery,
             [
-                categoryData.title,
-                categoryData.name,
-                categoryData.slug,
-                categoryData.description,
-                categoryData.status,
-                categoryData.type,
-                categoryData.parent_id,
-                categoryData.category_image_id,
-                categoryData.category_icon_id,
-                categoryData.created_by_id,
-                createdAt,
+                category_icon_id,
+                category_image_id,
+                description,
+                name,
+                parent_id,
+                status,
+                type
             ],
             (err, result) => {
                 if (err) {
                     console.error(err);
-                    reject({message: err, statusCode: 500});
+                    reject({ message: err, statusCode: 500 });
                 } else {
                     resolve({
                         message: "Category created successfully",
@@ -180,52 +190,57 @@ exports.createCategory = (categoryData) => {
     });
 };
 
-exports.updateCategory = (id, categoryData) => {
+exports.updateCategory = (categoryData) => {
+    const { category_icon_id,
+        category_image_id,
+        commission_rate,
+        description,
+        name,
+        parent_id,
+        status,
+        type, id } = categoryData;
     return new Promise((resolve, reject) => {
-        const sqlQuery = `UPDATE categories SET title = ?,
-        name = ?,
-        slug = ?,
-        description = ?,
-        status = ?,
-        type = ?,
-        parent_id = ?,
+        const sqlQuery = `UPDATE categories SET category_icon_id = ?,
         category_image_id = ?,
-        category_icon_id = ?,
-        updated_at = NOW()
+        description = ?,
+        name = ?,
+        parent_id = ?,
+        status = ?,
+        type = ?
       WHERE id = ?`;
 
         db.query(sqlQuery,
             [
-                categoryData.title,
-                categoryData.name,
-                categoryData.slug,
-                categoryData.description,
-                categoryData.status,
-                categoryData.type,
-                categoryData.parent_id,
-                categoryData.category_image_id,
-                categoryData.category_icon_id,
+                category_icon_id,
+                category_image_id,
+                description,
+                name,
+                parent_id,
+                status,
+                type,
                 id],
             (err, result) => {
                 if (err) {
                     console.error(err);
-                    reject({message: err, statusCode: 500});
+                    reject({ message: err, statusCode: 500 });
                 } else {
-                    resolve({message: "Category updated successfully", data: result, statusCode: 200});
+                    resolve({ message: "Category updated successfully", data: result, statusCode: 200 });
                 }
             });
     })
 };
 
-exports.deleteCategory = (id) => {
+exports.deleteCategory = (params) => {
+    const { 
+        id, type } = params;
     return new Promise((resolve, reject) => {
         db.query(`UPDATE categories SET status = 0, deleted_at = NOW() WHERE id = ${id}`,
             (err, result) => {
                 if (err) {
                     console.log(err);
-                    reject({error: err});
+                    reject({ error: err });
                 } else {
-                    resolve({data: result});
+                    resolve({ data: result });
                 }
             });
     });

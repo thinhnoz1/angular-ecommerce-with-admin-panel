@@ -6,8 +6,10 @@ const moment = require('moment');
 const db = require("../database/db");
 
 router.get("/single", orderController.get_single_order);
+router.get("/single-admin", orderController.get_single_order_admin);
 
 router.get("/get-all", orderController.get_orders);
+router.get("/get-all-admin", orderController.get_orders_admin);
 router.put("/update/:id", orderController.update_order);
 router.get("/delete/:id", orderController.delete_order);
 
@@ -127,7 +129,7 @@ router.post('/create_payment_url', async function (req, res, next) {
     vnp_Params['vnp_TxnRef'] = orderId;
     vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
     vnp_Params['vnp_OrderType'] = 'other';
-    vnp_Params['vnp_Amount'] = amount;
+    vnp_Params['vnp_Amount'] = amount*100;
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     vnp_Params['vnp_IpAddr'] = ipAddr;
     vnp_Params['vnp_CreateDate'] = createDate;
@@ -183,13 +185,16 @@ router.get('/vnpay_return', function (req, res, next) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
         // res.render('success', { code: vnp_Params['vnp_ResponseCode'] })
 
-        orderController.update_order_payment_status(vnp_Params['vnp_TxnRef']).then(result => {
-            console.log("Thanh cong");
-            res.status(200).send('Thành công, bạn có thể đóng cửa sổ này !');
-        }).catch((err) => {
-            res.status(err.statusCode || 500).send();
-        });
-
+        if(vnp_Params['vnp_ResponseCode'] === '00'){
+            orderController.update_order_payment_status(vnp_Params['vnp_TxnRef']).then(result => {
+                console.log("Thanh cong");
+                res.status(200).send('Thành công, bạn có thể đóng cửa sổ này !');
+            }).catch((err) => {
+                res.status(err.statusCode || 500).send();
+            });
+        }
+        else
+            res.status(200).send('Giao dịch thất bại!');
 
     } else {
         console.log("That bai");

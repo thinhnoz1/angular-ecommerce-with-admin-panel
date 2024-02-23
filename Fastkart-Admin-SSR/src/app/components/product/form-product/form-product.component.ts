@@ -129,7 +129,6 @@ export class FormProductComponent {
       name: new FormControl('', [Validators.required]),
       short_description: new FormControl('', [Validators.required]),
       description: new FormControl('', [Validators.required]),
-      store_id: new FormControl(),
       type: new FormControl('simple', [Validators.required]),
       unit: new FormControl(),
       weight: new FormControl(),
@@ -221,7 +220,6 @@ export class FormProductComponent {
               name: product?.name,
               short_description: product?.short_description,
               description: product?.description,
-              store_id: product?.store_id,
               type: product?.type,
               unit: product?.unit,
               weight: product?.weight,
@@ -348,14 +346,6 @@ export class FormProductComponent {
     this.products$.subscribe(product => {
       this.collectionProduct = product?.length ? product.filter(res => res?.data?.type == 'simple' && res?.data?.stock_status == 'in_stock') : [];
     })
-
-    this.setting$.subscribe(setting => {
-      if(setting?.activation?.multivendor) {
-        this.form.controls['store_id'].setValidators([Validators.required]);
-      } else {
-        this.form.controls['store_id'].removeValidators([]);
-      }
-    });
 
     this.form.controls['type'].valueChanges.subscribe(value => {
       if(value == 'simple') {

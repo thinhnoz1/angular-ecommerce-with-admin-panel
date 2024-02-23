@@ -1,9 +1,9 @@
 <app-page-wrapper [gridClass]="'col-sm-12'" [title]="'roles'">
-    <!-- <div *hasPermission="'role.create'" button>
+    <div *hasPermission="'role.create'" button>
         <a [routerLink]="['/role/create']" class="align-items-center btn btn-theme d-flex">
             <i class="ri-add-line"></i> {{ 'add_role' | translate }}
         </a>
-    </div> -->
+    </div>
     <app-table 
         [tableConfig]="tableConfig"
         [hasCheckbox]="true"

@@ -31,5 +31,20 @@ export class CategoryService {
   getCategoryById(payload?: Params): Observable<CategoryModel> {
     return this.http.get<CategoryModel>(`${environment.apiURL}/categories/get-one`, { params: payload });
   }
+
+  deleteCategory(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/categories/delete`, payload);
+  }
+  
+  updateCategory(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/categories/update`, payload);
+  }
+
+  addCategory(payload?: Params): Observable<any> {
+    // return this.http.get<UserModel>(`${environment.URL}/user.json`, { params: payload });
+    return this.http.post<any>(`${environment.apiURL}/categories/create`, payload);
+  }
   
 }
